@@ -1,7 +1,7 @@
 const API_KEY = "$2a$10$FC02j5gbHIHKA.wnoYQNqegrrC4EBf/gCyx1lR/oBRGi99Bj7aemC";
 const BIN_VIDEOS = "6a4171f1da38895dfe0cb6b8";
 const BIN_PLAYLIST = "6a41792df5f4af5e293e5e04";
-const BIN_PENDING = "6a41792df5f4af5e293e5e04"; // Sincronizado dinámicamente
+const BIN_PENDING = "6a4585f0f5f4af5e2950260e"; // Sincronizado dinámicamente
 
 let videosIglesia = [];
 let playlistDomingo = [];
