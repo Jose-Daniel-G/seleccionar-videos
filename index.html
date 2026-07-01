@@ -1,101 +1,425 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Control Remoto - Alabanzas Iglesia</title>
   <style>
-    * { box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: #1e1e24; color: #fff; margin: 0; padding: 20px; }
-    h1 { text-align: center; color: #4f46e5; margin-bottom: 4px; }
+    /* ── Variables de paleta de colores y estilos globales ── */
+    :root {
+      --gold: #c9a84c;
+      --gold-dim: rgba(201, 168, 76, 0.5);
+      --blue-light: #3a4dc4;
+      --pearl-muted: #a3a3a3;
+      --pearl-dim: #cbd5e1;
+    }
+
+    * { 
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #1e1e24;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* ── Estructura de la aplicación ── */
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 3rem;
+    }
+
+    /* ── Header Estilizado ── */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: #2a2a35;
+      padding: 1.2rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .logo-wrap {
+      width: 78px;
+      height: 78px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--gold-dim);
+      box-shadow: 0 0 28px rgba(201, 168, 76, 0.2), 0 0 60px rgba(32, 51, 160, 0.3);
+      position: relative;
+    }
+
+    .logo-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .header-text {
+      flex: 1;
+    }
+
+    header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      text-transform: uppercase;
+      line-height: 1.2;
+      margin: 0;
+      text-shadow: 0 0 40px rgba(201, 168, 76, 0.3);
+    }
+
+    header p {
+      font-size: 0.72rem;
+      color: var(--pearl-muted);
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      margin: 0.3rem 0 0 0;
+    }
+
+    .gold-rule {
+      width: 56px;
+      height: 1.5px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      margin-top: 0.6rem;
+      opacity: 0.7;
+    }
+
+    /* Status indicator en header */
+    .now-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.9rem;
+      background: rgba(32, 51, 160, 0.15);
+      border: 1px solid rgba(32, 51, 160, 0.3);
+      border-radius: 20px;
+      font-size: 0.68rem;
+      color: var(--pearl-dim);
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+    }
+
+    .now-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      animation: pulse-dot 2s ease infinite;
+    }
+
+    .now-badge.playing .dot {
+      background: var(--gold);
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    /* ── Títulos y Conexión ── */
+    h2.seccion-titulo {
+      text-align: center;
+      color: #6366f1;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      border-bottom: 2px solid #3f3f56;
+      padding-bottom: 8px;
+      font-size: 1.1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+    }
+
     #estado-conexion {
-      text-align: center; font-size: 0.78rem; margin-bottom: 16px;
-      padding: 6px 12px; border-radius: 20px; display: inline-block; width: 100%;
+      text-align: center;
+      font-size: 0.78rem;
+      padding: 6px 12px;
+      border-radius: 20px;
+      display: inline-block;
     }
-    .estado-ok    { background: rgba(34,197,94,0.15);  color: #4ade80; }
-    .estado-error { background: rgba(239,68,68,0.15);  color: #f87171; }
-    .estado-carga { background: rgba(79,70,229,0.15);  color: #a5b4fc; }
 
-    .container { display: flex; gap: 20px; max-width: 1200px; margin: 0 auto; height: 78vh; }
-    .panel { flex: 1; background: #2a2a35; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; }
-    h2 { margin-top: 0; border-bottom: 2px solid #3f3f56; padding-bottom: 8px; font-size: 1.1rem;
-         display: flex; justify-content: space-between; align-items: center; }
-    .badge { font-size: 0.7rem; background: #3f3f56; padding: 2px 8px; border-radius: 10px; color: #a5b4fc; }
+    .estado-ok { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+    .estado-error { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    .estado-carga { background: rgba(79, 70, 229, 0.15); color: #a5b4fc; }
 
-    .search-wrap { position: relative; margin-bottom: 8px; }
-    .search-wrap svg { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); opacity: 0.4; pointer-events: none; }
+    /* ── Contenedores de Listas (Paneles) ── */
+    .container {
+      display: flex;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 16px auto 0;
+      height: 70vh;
+    }
+
+    .panel {
+      flex: 1;
+      background: #2a2a35;
+      border-radius: 8px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      background: #3f3f56;
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: #a5b4fc;
+    }
+
+    /* ── Buscador ── */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
     .search-input {
-      width: 100%; background: #3f3f56; border: 1px solid #555570; border-radius: 6px;
-      color: #fff; padding: 7px 10px 7px 30px; font-size: 0.82rem; outline: none;
+      width: 100%;
+      background: #3f3f56;
+      border: 1px solid #555570;
+      border-radius: 6px;
+      color: #fff;
+      padding: 8px 10px 8px 32px;
+      font-size: 0.85rem;
+      outline: none;
     }
-    .search-input:focus { border-color: #4f46e5; }
 
-    .list { overflow-y: auto; flex: 1; list-style: none; padding: 0; margin: 0; }
+    .search-input:focus {
+      border-color: #4f46e5;
+    }
+
+    /* ── Listado de Ítems ── */
+    .list {
+      overflow-y: auto;
+      flex: 1;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
     li {
-      background: #3f3f56; padding: 9px 10px; margin-bottom: 6px; border-radius: 4px;
-      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-      transition: background 0.15s; font-size: 0.85rem;
+      background: #3f3f56;
+      padding: 9px 10px;
+      margin-bottom: 6px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s;
+      font-size: 0.85rem;
     }
-    li:hover { background: #4f46e5; }
-    li .nombre { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 8px; }
-    li.ya-en-lista { opacity: 0.45; }
 
-    .btn { background: #4f46e5; color: white; border: none; padding: 12px; border-radius: 6px;
-           font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; font-size: 1rem; }
+    li:hover {
+      background: #4f46e5;
+    }
+
+    li .nombre {
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 8px;
+    }
+
+    li.ya-en-lista {
+      opacity: 0.45;
+    }
+
+    /* ── Botones ── */
+    .btn {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+
     .btn:hover:not(:disabled) { background: #4338ca; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-add    { background: #22c55e; border: none; color: white; padding: 4px 9px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; flex-shrink: 0; }
+
+    .btn-add { background: #22c55e; border: none; color: white; padding: 4px 9px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; flex-shrink: 0; }
     .btn-remove { background: #ef4444; border: none; color: white; padding: 4px 9px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; flex-shrink: 0; }
     .btn-up, .btn-down { background: #6366f1; border: none; color: white; padding: 3px 7px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; flex-shrink: 0; }
-    .btn-reload { background: #6366f1; border: none; color: white; padding: 5px 12px; border-radius: 6px;
-                  cursor: pointer; font-size: 0.75rem; margin-left: 8px; }
+    
+    .btn-reload {
+      background: #6366f1;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      margin-left: 8px;
+      transition: background 0.2s;
+    }
+    .btn-reload:hover { background: #4f46e5; }
 
-    .empty { text-align: center; color: #666; padding: 30px 10px; font-size: 0.82rem; line-height: 1.8; }
-    .debug-box { background: #111; border: 1px solid #333; border-radius: 6px; padding: 10px;
-                 font-size: 0.7rem; color: #f87171; font-family: monospace; white-space: pre-wrap;
-                 margin-top: 8px; max-height: 120px; overflow-y: auto; }
+    /* ── Estados vacíos y Debugger ── */
+    .empty {
+      text-align: center;
+      color: #aaa;
+      padding: 30px 10px;
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
 
-    /* Instrucciones cuando hay error */
-    .pasos { background: rgba(79,70,229,0.1); border: 1px solid #4f46e5; border-radius: 8px;
-             padding: 12px 16px; margin-top: 8px; font-size: 0.78rem; line-height: 1.9; }
+    .debug-box {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.7rem;
+      color: #f87171;
+      font-family: monospace;
+      white-space: pre-wrap;
+      margin-top: 8px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .pasos {
+      background: rgba(79, 70, 229, 0.1);
+      border: 1px solid #4f46e5;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 8px;
+      font-size: 0.78rem;
+      line-height: 1.9;
+      text-align: left;
+    }
+
     .pasos strong { color: #a5b4fc; }
+
+    /* ── Diseño Responsivo (Mobile) ── */
+    @media (max-width: 860px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .gold-rule {
+        margin: 0.6rem auto 0;
+      }
+
+      .now-badge {
+        display: none;
+      }
+
+      .container {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .panel {
+        height: 45vh;
+      }
+    }
   </style>
 </head>
-<body>
-  <h1>Planificador Domingo 🎶</h1>
-  <div style="text-align:center">
-    <span id="estado-conexion" class="estado-carga">⏳ Conectando...</span>
-    <button class="btn-reload" onclick="cargarDatos()" title="Reintentar conexión">🔄 Reintentar</button>
-  </div>
 
-  <div class="container" style="margin-top:12px">
-    <div class="panel">
-      <h2>Videos en PC Iglesia <span class="badge" id="badge-disponibles">0</span></h2>
-      <div class="search-wrap">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <input type="text" class="search-input" id="buscar" placeholder="Buscar video..." oninput="filtrar(this.value)">
+<body>
+  <div class="app">
+    <header>
+      <div class="logo-wrap">
+        <img src="assets/imresizer-logo.jpg" alt="Logo Remanente"
+          onerror="this.style.display='none';this.parentElement.innerHTML='<svg width=\'44\' height=\'44\' viewBox=\'0 0 44 44\' fill=\'none\'><line x1=\'22\' y1=\'4\' x2=\'22\' y2=\'40\' stroke=\'#3A4DC4\' stroke-width=\'2.5\' stroke-linecap=\'round\'/><line x1=\'11\' y1=\'16\' x2=\'33\' y2=\'16\' stroke=\'#3A4DC4\' stroke-width=\'2.5\' stroke-linecap=\'round\'/></svg>'">
       </div>
-      <ul id="lista-disponibles" class="list">
-        <li><span class="nombre">Esperando conexión...</span></li>
-      </ul>
+      <div class="header-text">
+        <h1>Remanente del Dios Vivo y Eterno</h1>
+        <p>Ministerio Multimedia · Alabanza · Predicación</p>
+        <div class="gold-rule"></div>
+      </div>
+      <div class="now-badge playing">
+        <div class="dot"></div>
+        <span>Panel Activo</span>
+      </div>
+    </header>
+
+    <h2 class="seccion-titulo">Planificador Domingo 🎶</h2>
+    
+    <div style="text-align:center; margin-bottom: 10px;">
+      <span id="estado-conexion" class="estado-carga">⏳ Conectando...</span>
+      <button class="btn-reload" onclick="cargarDatos()" title="Reintentar conexión">🔄 Reintentar</button>
     </div>
 
-    <div class="panel">
-      <h2>Playlist del Domingo <span class="badge" id="badge-domingo">0</span></h2>
-      <ul id="lista-domingo" class="list"></ul>
-      <button class="btn" id="btn-guardar" onclick="guardarPlaylist()">💾 Guardar Playlist</button>
+    <div class="container">
+      <!-- Panel de Videos Disponibles -->
+      <div class="panel">
+        <h2>Videos en PC Iglesia <span class="badge" id="badge-disponibles">0</span></h2>
+        <div class="search-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" class="search-input" id="buscar" placeholder="Buscar video..." oninput="filtrar(this.value)">
+        </div>
+        <ul id="lista-disponibles" class="list">
+          <li><span class="nombre">Esperando conexión...</span></li>
+        </ul>
+      </div>
+
+      <!-- Panel de Playlist -->
+      <div class="panel">
+        <h2>Playlist del Domingo <span class="badge" id="badge-domingo">0</span></h2>
+        <ul id="lista-domingo" class="list"></ul>
+        <button class="btn" id="btn-guardar" onclick="guardarPlaylist()">💾 Guardar Playlist</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const API_KEY      = '$2a$10$FC02j5gbHIHKA.wnoYQNqegrrC4EBf/gCyx1lR/oBRGi99Bj7aemC';
-    const BIN_VIDEOS   = '6a4171f1da38895dfe0cb6b8';
+    const API_KEY = '$2a$10$FC02j5gbHIHKA.wnoYQNqegrrC4EBf/gCyx1lR/oBRGi99Bj7aemC';
+    const BIN_VIDEOS = '6a4171f1da38895dfe0cb6b8';
     const BIN_PLAYLIST = '6a41792df5f4af5e293e5e04';
 
-    let videosIglesia   = [];
+    let videosIglesia = [];
     let playlistDomingo = [];
-    let filtroActual    = '';
+    let filtroActual = '';
 
     function setEstado(msg, tipo) {
       const el = document.getElementById('estado-conexion');
@@ -103,7 +427,6 @@
       el.className = 'estado-' + tipo;
     }
 
-    /* ── Fetch con timeout de 12 s ── */
     async function fetchBin(binId) {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 12000);
@@ -123,27 +446,23 @@
       }
     }
 
-    /* ── Extrae videos de cualquier estructura posible ── */
     function extraerVideos(record) {
       if (record && Array.isArray(record.videos)) return record.videos;
-      if (Array.isArray(record))                  return record;
-      if (record && Array.isArray(record.data))   return record.data;
+      if (Array.isArray(record)) return record;
+      if (record && Array.isArray(record.data)) return record.data;
       return null;
     }
 
-    /* ── Carga principal ── */
     async function cargarDatos() {
       setEstado('⏳ Leyendo videos de la iglesia...', 'carga');
       const panelDisp = document.getElementById('lista-disponibles');
       panelDisp.innerHTML = '<li><span class="nombre">Conectando con JSONBin...</span></li>';
 
       try {
-        /* — Videos disponibles — */
         const dataVideos = await fetchBin(BIN_VIDEOS);
         const todos = extraerVideos(dataVideos.record);
 
         if (!todos) {
-          // Mostrar estructura real recibida para diagnóstico
           const estructura = JSON.stringify(dataVideos.record, null, 2);
           setEstado('⚠️ Estructura inesperada en el Bin de videos', 'error');
           panelDisp.innerHTML = `
@@ -156,18 +475,16 @@
           return;
         }
 
-        // Filtrar solo archivos de video reales
         videosIglesia = todos.filter(v =>
           v && v.filename && !v.isFolder &&
           /\.(mp4|mkv|avi|webm|mov)$/i.test(v.filename)
         );
 
-        /* — Playlist guardada — */
         try {
           const dataPlay = await fetchBin(BIN_PLAYLIST);
           const raw = dataPlay.record;
           const arr = Array.isArray(raw?.playlist) ? raw.playlist
-                    : Array.isArray(raw) ? raw : [];
+            : Array.isArray(raw) ? raw : [];
           playlistDomingo = arr.filter(x => x && x !== 'inicio');
         } catch (playErr) {
           console.warn('Playlist previa no disponible:', playErr.message);
@@ -190,7 +507,7 @@
           return;
         }
 
-        setEstado(`✅ ${videosIglesia.length} videos cargados desde la PC de la iglesia`, 'ok');
+        setEstado(`✅ ${videosIglesia.length} videos cargados`, 'ok');
         renderizarListas();
 
       } catch (e) {
@@ -203,25 +520,23 @@
           <div class="pasos">
             <strong>Posibles causas:</strong><br>
             ${esCors
-              ? '• El navegador bloqueó la petición (CORS).<br>  Intenta abrir este archivo desde un servidor local o usa Chrome sin restricciones.'
-              : '• Verifica que tienes internet.<br>• Verifica que el API Key de JSONBin sea correcto.<br>• El Bin puede haber sido eliminado o privado.'
-            }<br><br>
+            ? '• El navegador bloqueó la petición (CORS).<br>  Intenta abrir este archivo desde un servidor local o usa Chrome sin restricciones.'
+            : '• Verifica que tienes internet.<br>• Verifica que el API Key de JSONBin sea correcto.<br>• El Bin puede haber sido eliminado o privado.'
+          }<br><br>
             Haz clic en 🔄 <strong>Reintentar</strong> para intentar de nuevo.
           </div>`;
       }
     }
 
-    /* ── Filtro búsqueda ── */
     function filtrar(val) {
       filtroActual = val.toLowerCase().trim();
       renderDisponibles();
     }
 
-    /* ── Render disponibles ── */
     function renderDisponibles() {
       const container = document.getElementById('lista-disponibles');
-      const enLista   = new Set(playlistDomingo);
-      const lista     = filtroActual
+      const enLista = new Set(playlistDomingo);
+      const lista = filtroActual
         ? videosIglesia.filter(v => v.name.toLowerCase().includes(filtroActual))
         : videosIglesia;
 
@@ -244,7 +559,6 @@
       });
     }
 
-    /* ── Render playlist domingo ── */
     function renderDomingo() {
       const container = document.getElementById('lista-domingo');
       document.getElementById('badge-domingo').textContent = playlistDomingo.length;
@@ -254,14 +568,14 @@
       }
       container.innerHTML = '';
       playlistDomingo.forEach((filename, i) => {
-        const info   = videosIglesia.find(v => v.filename === filename);
+        const info = videosIglesia.find(v => v.filename === filename);
         const nombre = info ? info.name : filename;
-        const li     = document.createElement('li');
+        const li = document.createElement('li');
         li.innerHTML = `
           <span class="nombre" title="${nombre}">${i + 1}. ${nombre}</span>
           <div style="display:flex;gap:4px;flex-shrink:0">
-            <button class="btn-up"   onclick="mover(${i},-1)" ${i===0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
-            <button class="btn-down" onclick="mover(${i},+1)" ${i===playlistDomingo.length-1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+            <button class="btn-up"   onclick="mover(${i},-1)" ${i === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+            <button class="btn-down" onclick="mover(${i},+1)" ${i === playlistDomingo.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
             <button class="btn-remove" onclick="quitar(${i})">✕</button>
           </div>`;
         container.appendChild(li);
@@ -273,7 +587,7 @@
     function agregar(filename) {
       if (!playlistDomingo.includes(filename)) { playlistDomingo.push(filename); renderizarListas(); }
     }
-    function quitar(i)     { playlistDomingo.splice(i, 1); renderDomingo(); }
+    function quitar(i) { playlistDomingo.splice(i, 1); renderDomingo(); }
     function mover(i, dir) {
       const j = i + dir;
       if (j < 0 || j >= playlistDomingo.length) return;
@@ -281,7 +595,6 @@
       renderDomingo();
     }
 
-    /* ── Guardar playlist ── */
     async function guardarPlaylist() {
       const btn = document.getElementById('btn-guardar');
       btn.disabled = true; btn.textContent = '⏳ Guardando...';
@@ -305,8 +618,8 @@
       }
     }
 
-    /* ── Arrancar ── */
     window.onload = cargarDatos;
   </script>
 </body>
+
 </html>
