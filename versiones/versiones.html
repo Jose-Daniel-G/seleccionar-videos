@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planificador Domingo · Remanente</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-dim: rgba(201,168,76,0.45);
+      --blue-light: #3a4dc4;
+      --pearl-muted: #a3a3a3;
+      --bg-dark: #1e1e24;
+      --bg-panel: #2a2a35;
+      --bg-item: #3f3f56;
+      --bg-item-hover: #4f46e5;
+      --border-item: #4f4f66;
+      --text-pearl: #e2e2e9;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #fff;
+      font-family: 'Lato', sans-serif;
+      padding-bottom: 40px;
+    }
+
+    .cinzel {
+      font-family: 'Cinzel', serif;
+    }
+
+    /* ── Header ── */
+    .custom-navbar {
+      background-color: var(--bg-panel);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.8rem 1rem;
+    }
+    .logo-img {
+      width: 36px;
+      height: 36px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 1.5px solid var(--gold);
+    }
+    .navbar-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+
+    /* ── Tarjetas de Control ── */
+    .panel-card {
+      background-color: var(--bg-panel);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1.2rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* ── Buscador ── */
+    .search-container {
+      position: relative;
+    }
+    .search-container i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--pearl-muted);
+      font-size: 0.9rem;
+    }
+    .search-input {
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-item);
+      border-radius: 8px;
+      padding: 0.55rem 0.6rem 0.55rem 2.2rem;
+      color: #fff;
+      font-size: 0.88rem;
+      transition: all 0.2s ease;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+    }
+
+    /* ── Listas de Videos (Elástica en móviles, Fija en PC) ── */
+    .scroll-list {
+      list-group-style: none;
+      padding: 0;
+      margin: 0;
+      overflow-y: auto;
+      height: 50vh; /* Altura original en computadoras */
+    }
+
+    /* Comportamiento elástico en móviles solicitado */
+    @media (max-width: 767.98px) {
+      .scroll-list {
+        height: auto;       /* Se encoge si hay 1 o 2 elementos */
+        max-height: 220px;  /* Se clava a partir del 5to elemento */
+      }
+      .gold-rule {
+        margin: 0.4rem auto 0 !important;
+        background: linear-gradient(to right, transparent, var(--gold), transparent);
+      }
+    }
+
+    /* Personalización estética de las barras de scroll */
+    .scroll-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .scroll-list::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+    }
+    .scroll-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+    .scroll-list::-webkit-scrollbar-thumb:hover {
+      background: var(--gold);
+    }
+
+    /* Elementos individuales de las listas */
+    .scroll-list li, .pending-list li {
+      background-color: var(--bg-item);
+      border: 1px solid var(--border-item);
+      border-radius: 8px;
+      padding: 0.55rem 0.7rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.2s ease;
+    }
+    .scroll-list li:hover {
+      background-color: rgba(255,255,255,0.03);
+    }
+    .video-name {
+      font-size: 0.88rem;
+      color: var(--text-pearl);
+      white-space: nowrap;
+      overflow: hidden;
+      text-truncate: ellipsis;
+      max-width: 82%;
+    }
+
+    /* Botones de acción pequeños */
+    .btn-action-sm {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      border: none;
+      color: #fff;
+      transition: transform 0.1s ease;
+    }
+    .btn-action-sm:active { transform: scale(0.92); }
+    .btn-add { background-color: rgba(79, 70, 229, 0.2); color: #818cf8; border: 1px solid rgba(129, 140, 248, 0.3); }
+    .btn-add:hover { background-color: var(--bg-item-hover); color:#fff; }
+    .btn-up { background-color: rgba(255,255,255,0.06); color: #a3a3a3; }
+    .btn-down { background-color: rgba(255,255,255,0.06); color: #a3a3a3; }
+    .btn-del { background-color: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.25); }
+    .btn-del:hover { background-color: #ef4444; color: #fff; }
+
+    /* ── Sección de Pendientes ── */
+    .pending-section {
+      margin-top: 1.2rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .pending-section-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-pending-count {
+      background-color: rgba(201, 168, 76, 0.15);
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(201, 168, 76, 0.3);
+    }
+    .pending-section-hint {
+      font-size: 0.75rem;
+      color: var(--pearl-muted);
+      margin-bottom: 0.8rem;
+      line-height: 1.3;
+    }
+
+    /* Fila de Input y Botón de Pendientes */
+    .yt-input-row {
+      display: flex;
+      gap: 6px;
+    }
+    .yt-input-row input {
+      flex: 1;
+      background-color: rgba(0,0,0,0.25);
+      border: 1px solid var(--border-item);
+      border-radius: 6px;
+      padding: 0.45rem 0.6rem;
+      color: #fff;
+      font-size: 0.82rem;
+    }
+    .yt-input-row input:focus { outline: none; border-color: var(--gold); }
+    .btn-add-pending {
+      background-color: var(--gold);
+      color: #1e1e24;
+      border: none;
+      font-weight: 700;
+      font-size: 0.82rem;
+      border-radius: 6px;
+      padding: 0 0.8rem;
+      transition: background-color 0.2s ease;
+    }
+    .btn-add-pending:hover { background-color: #dfba53; }
+    .btn-add-pending:disabled { opacity: 0.6; }
+
+    /* Vista previa de miniatura */
+    .yt-preview {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background-color: rgba(0,0,0,0.15);
+      border: 1px dashed var(--gold-dim);
+      border-radius: 6px;
+      padding: 6px;
+      margin-bottom: 8px;
+    }
+    .yt-preview.show { display: flex; }
+    .yt-preview img {
+      width: 56px;
+      height: 42px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    #yt-preview-label {
+      font-size: 0.75rem;
+      color: var(--text-pearl);
+    }
+
+    /* Lista de canciones en espera */
+    .pending-list {
+      list-group-style: none;
+      padding: 0;
+      margin: 8px 0 0 0;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .empty-hint {
+      font-size: 0.78rem;
+      color: var(--pearl-muted);
+      font-style: italic;
+    }
+
+    /* Botón Guardar Principal */
+    .btn-save-main {
+      background-color: #4f46e5;
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(79, 46, 229, 0.2);
+    }
+    .btn-save-main:hover { background-color: #4338ca; }
+    .btn-save-main.saved { background-color: #16a34a !important; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); }
+  </style>
+</head>
+<body>
+
+  <nav class="custom-navbar d-flex align-items-center justify-content-between shadow-sm">
+    <div class="d-flex align-items-center gap-2">
+      <img src="assets/imresizer-logo.jpg" alt="Logo" class="logo-img">
+      <div>
+        <span class="navbar-title cinzel d-block">REMANENTE</span>
+        <span class="text-muted d-block" style="font-size:0.65rem; font-weight:700; letter-spacing:1px; margin-top:-2px;">PLANIFICADOR</span>
+      </div>
+    </div>
+    <span class="badge rounded-pill px-3 py-2 bg-info bg-opacity-25 text-info" id="estado-conexion" style="font-size:0.75rem; font-weight:600;">
+      ⏳ Conectando...
+    </span>
+  </nav>
+
+  <div class="container-fluid mt-3 px-3">
+    <div class="row g-3">
+      
+      <div class="col-12 col-md-6">
+        <div class="panel-card">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="panel-title"><i class="bi bi-pc-display text-warning me-2"></i>Videos en PC Iglesia</span>
+            <span class="badge bg-secondary bg-opacity-25 text-pearl rounded-pill px-2" id="badge-count-videos" style="font-size:0.72rem;">0</span>
+          </div>
+          
+          <div class="search-container mb-3">
+            <i class="bi bi-search"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="Buscar video..." oninput="handleSearch(this.value)">
+          </div>
+
+          <ul class="scroll-list" id="lista-disponibles"></ul>
+
+          <div class="pending-section">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <span class="pending-section-title">
+                <i class="bi bi-cloud-download me-1"></i>Videos para descargar
+              </span>
+              <span class="badge-pending-count" id="badge-pendientes">0</span>
+            </div>
+            <p class="pending-section-hint">
+              ¿No está el video? Pega el link de YouTube. La PC de la iglesia lo descarga al abrir Remanente Desktop.
+            </p>
+
+            <div class="yt-preview" id="yt-preview">
+              <img id="yt-preview-img" src="" alt="Thumbnail">
+              <span id="yt-preview-label">Video detectado — listo para agregar</span>
+            </div>
+
+            <div class="pending-status small mb-2 d-none" id="pending-status"></div>
+
+            <div class="yt-input-row">
+              <input type="url" id="input-yt-url" placeholder="https://youtube.com/watch?v=..." oninput="onYtInput(this.value)">
+              <button class="btn-add-pending" id="btn-agregar" onclick="agregarPendiente()">
+                <i class="bi bi-plus-lg"></i> Agregar
+              </button>
+            </div>
+
+            <ul class="pending-list" id="lista-pendientes">
+              <li style="justify-content:center; border:none; background:none;">
+                <span class="empty-hint">Cargando cola de descargas...</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="panel-card d-flex flex-column justify-content-between h-100">
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="panel-title"><i class="bi bi-calendar-check text-primary me-2"></i>Playlist del Domingo</span>
+              <span class="badge bg-primary bg-opacity-25 text-primary rounded-pill px-2" id="badge-count-domingo" style="font-size:0.72rem;">0</span>
+            </div>
+            <div class="gold-rule" style="height:1px; background:rgba(255,255,255,0.08); margin-bottom:12px;"></div>
+            
+            <ul class="scroll-list" id="lista-domingo" style="height: auto; max-height: 480px;"></ul>
+          </div>
+
+          <button class="btn btn-save-main w-100 py-2.5 mt-3 fw-bold shadow-sm" id="btn-guardar" onclick="guardarPlaylist()">
+            <i class="bi bi-floppy me-1"></i> Guardar Playlist
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ── Ajustes JSONBin ── */
+    const API_KEY = '$2a$10$FC02j5gbHIHKA.wnoYQNqegrrC4EBf/gCyx1lR/oBRGi99Bj7aemC';
+    const BIN_VIDEOS = '6a4171f1da38895dfe0cb6b8';
+    const BIN_PLAYLIST = '6a41792df5f4af5e293e5e04';
+    const BIN_PENDING = '6a41792df5f4af5e293e5e04'; // Sincronizado dinámicamente
+
+    let videosIglesia = [];
+    let playlistDomingo = [];
+    let descargasPendientes = [];
+    let filtroBusqueda = '';
+
+    // Inicializador al arrancar la vista
+    window.addEventListener('DOMContentLoaded', () => {
+      cargarDatos();
+      cargarDescargasPendientes();
+    });
+
+    // Control global de estados con soporte para HTML (innerHTML)
+    function setEstado(msg, tipo) {
+      const el = document.getElementById('estado-conexion');
+      el.innerHTML = msg; 
+      
+      el.className = "badge rounded-pill px-3 py-2 ";
+      if (tipo === 'ok') el.classList.add('bg-success', 'bg-opacity-25', 'text-success');
+      else if (tipo === 'error') el.classList.add('bg-danger', 'bg-opacity-25', 'text-danger');
+      else el.classList.add('bg-info', 'bg-opacity-25', 'text-info');
+    }
+
+    // Extractor recursivo de videos del JSONBin
+    function extraerVideos(obj) {
+      if (!obj) return [];
+      if (Array.isArray(obj)) return obj;
+      if (Array.isArray(obj.files)) return obj.files;
+      if (typeof obj === 'object') {
+        for (let key in obj) {
+          if (Array.isArray(obj[key])) return obj[key];
+        }
+      }
+      return [];
+    }
+
+    // Cargar Catálogos Principales
+    async function cargarDatos() {
+      setEstado('⏳ Leyendo videos...', 'carga');
+      const panelDisp = document.getElementById('lista-disponibles');
+      panelDisp.innerHTML = '<li style="justify-content:center; border:none; background:none;"><span class="empty-hint text-info">Conectando con la nube...</span></li>';
+
+      try {
+        const resVideos = await fetch(`https://api.jsonbin.io/v3/b/${BIN_VIDEOS}/latest`, { headers: { 'X-Master-Key': API_KEY } });
+        const dataVideos = await resVideos.json();
+        const todos = extraerVideos(dataVideos.record);
+
+        videosIglesia = todos.filter(v =>
+          v && v.filename && !v.isFolder && /\.(mp4|mkv|avi|webm|mov)$/i.test(v.filename)
+        );
+
+        try {
+          const resPlay = await fetch(`https://api.jsonbin.io/v3/b/${BIN_PLAYLIST}/latest`, { headers: { 'X-Master-Key': API_KEY } });
+          const dataPlay = await resPlay.json();
+          const raw = dataPlay.record;
+          const arr = Array.isArray(raw?.playlist) ? raw.playlist : Array.isArray(raw) ? raw : [];
+          playlistDomingo = arr.filter(x => x && x !== 'inicio');
+        } catch (playErr) {
+          playlistDomingo = [];
+        }
+
+        if (videosIglesia.length === 0) {
+          setEstado(`⚠️ Carpeta vacía`, 'error');
+          return;
+        }
+
+        setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length} videos`, 'ok');
+        renderizarListas();
+
+      } catch (e) {
+        setEstado('❌ Error Red', 'error');
+      }
+    }
+
+    // Renderizado Maestro de UI
+    function renderizarListas() {
+      renderDisponibles();
+      renderDomingo();
+    }
+
+    function renderDisponibles() {
+      const container = document.getElementById('lista-disponibles');
+      const badgeCount = document.getElementById('badge-count-videos');
+      
+      const filtrados = videosIglesia.filter(v => 
+        v.name.toLowerCase().includes(filtroBusqueda.toLowerCase()) ||
+        v.filename.toLowerCase().includes(filtroBusqueda.toLowerCase())
+      );
+
+      badgeCount.textContent = filtrados.length;
+
+      if (filtrados.length === 0) {
+        container.innerHTML = `<li style="justify-content:center; border:none; background:none;"><span class="empty-hint">No se encontraron videos</span></li>`;
+        return;
+      }
+
+      container.innerHTML = filtrados.map(v => {
+        const yaAgregado = playlistDomingo.includes(v.filename);
+        return `
+          <li>
+            <span class="video-name" title="${v.filename}">${v.name}</span>
+            <button class="btn-action-sm btn-add" onclick="agregarADomingo('${v.filename}')" ${yaAgregado ? 'disabled style="opacity:0.4;"' : ''}>
+              <i class="bi ${yaAgregado ? 'bi-check-lg' : 'bi-plus-lg'}"></i>
+            </button>
+          </li>
+        `;
+      }).join('');
+    }
+
+    function renderDomingo() {
+      const container = document.getElementById('lista-domingo');
+      const badgeCount = document.getElementById('badge-count-domingo');
+      badgeCount.textContent = playlistDomingo.length;
+
+      if (playlistDomingo.length === 0) {
+        container.innerHTML = `<li style="justify-content:center; border:none; background:none;"><span class="empty-hint">Lista vacía. Agrega videos del panel izquierdo.</span></li>`;
+        return;
+      }
+
+      container.innerHTML = playlistDomingo.map((filename, i) => {
+        const limpio = filename.replace(/\.[^/.]+$/, ""); // Remueve extensión visualmente
+        return `
+          <li>
+            <span class="video-name" title="${filename}">${i + 1}. ${limpio}</span>
+            <div class="d-flex gap-1">
+              <button class="btn-action-sm btn-up" onclick="mover(${i}, -1)"><i class="bi bi-caret-up-fill"></i></button>
+              <button class="btn-action-sm btn-down" onclick="mover(${i}, 1)"><i class="bi bi-caret-down-fill"></i></button>
+              <button class="btn-action-sm btn-del" onclick="quitar(${i})"><i class="bi bi-x-lg"></i></button>
+            </div>
+          </li>
+        `;
+      }).join('');
+    }
+
+    function handleSearch(val) {
+      filtroBusqueda = val;
+      renderDisponibles();
+    }
+
+    function agregarADomingo(filename) {
+      if (!playlistDomingo.includes(filename)) {
+        playlistDomingo.push(filename);
+        renderizarListas();
+      }
+    }
+
+    function quitar(i) {
+      playlistDomingo.splice(i, 1);
+      renderizarListas();
+    }
+
+    function mover(i, dir) {
+      const j = i + dir;
+      if (j < 0 || j >= playlistDomingo.length) return;
+      [playlistDomingo[i], playlistDomingo[j]] = [playlistDomingo[j], playlistDomingo[i]];
+      renderDomingo();
+    }
+
+    // Persistir Playlist de Domingo
+    async function guardarPlaylist() {
+      const btn = document.getElementById('btn-guardar');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Guardando...';
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_PLAYLIST}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+          body: JSON.stringify({ playlist: playlistDomingo, savedAt: new Date().toISOString() })
+        });
+        if (res.ok) {
+          btn.classList.add('saved');
+          btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> ¡Guardado con Éxito!';
+          setTimeout(() => {
+            btn.classList.remove('saved');
+            btn.innerHTML = '<i class="bi bi-floppy me-1"></i> Guardar Playlist';
+            btn.disabled = false;
+          }, 2500);
+        }
+      } catch (e) {
+        btn.innerHTML = '<i class="bi bi-exclamation-triangle me-1"></i> Error Red';
+        btn.disabled = false;
+      }
+    }
+
+    /* ── LÓGICA DE VIDEO EN ESPERA / COLA PENDIENTES ── */
+    async function cargarDescargasPendientes() {
+      const lista = document.getElementById('lista-pendientes');
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_PENDING}/latest`, {
+          headers: { 'X-Master-Key': API_KEY }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          descargasPendientes = Array.isArray(data.record?.pending) ? data.record.pending : [];
+          renderizarColaEspera();
+        }
+      } catch (e) {
+        console.error("Error leyendo cola pendientes", e);
+        lista.innerHTML = `<li><span class="empty-hint text-danger">⚠️ Error de sincronización</span></li>`;
+      }
+    }
+
+    function renderizarColaEspera() {
+      const lista = document.getElementById('lista-pendientes');
+      const badge = document.getElementById('badge-pendientes');
+      
+      badge.textContent = descargasPendientes.length;
+
+      if (descargasPendientes.length === 0) {
+        lista.innerHTML = `
+          <li style="justify-content:center; border:none; background:none;">
+            <span class="empty-hint">No hay videos en espera</span>
+          </li>`;
+        return;
+      }
+
+      lista.innerHTML = descargasPendientes.map(item => `
+        <li>
+          <div class="d-flex flex-column" style="max-width: 78%;">
+            <span class="text-truncate d-block fw-bold" style="color: var(--gold); font-size: 0.82rem;">
+              ${item.title || 'Video de YouTube'}
+            </span>
+            <span class="text-muted text-truncate d-block" style="font-size: 0.7rem; margin-top:1px;">
+              ${item.url}
+            </span>
+          </div>
+          <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill" style="font-size:0.65rem; padding: 4px 8px;">
+            🕒 En espera
+          </span>
+        </li>
+      `).join('');
+    }
+
+    function onYtInput(url) {
+      const preview = document.getElementById('yt-preview');
+      const img = document.getElementById('yt-preview-img');
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+
+      if (match && match[2].length === 11) {
+        const videoId = match[2];
+        img.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+        preview.classList.add('show');
+      } else {
+        img.src = '';
+        preview.classList.remove('show');
+      }
+    }
+
+    async function agregarPendiente() {
+      const input = document.getElementById('input-yt-url');
+      const btn = document.getElementById('btn-agregar');
+      const status = document.getElementById('pending-status');
+      const url = input.value.trim();
+
+      if (!url.includes('youtube.com') && !url.includes('youtu.be')) {
+        status.className = "pending-status text-danger d-block small mb-2";
+        status.textContent = "❌ Link de YouTube inválido.";
+        status.classList.remove('d-none');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+      status.classList.add('d-none');
+
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      const videoId = match ? match[2] : 'Nuevo Link';
+
+      descargasPendientes.push({
+        id: Date.now().toString(),
+        url: url,
+        title: `Enlace de Alabanza (${videoId})`,
+        status: 'pending'
+      });
+
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_PENDING}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+          body: JSON.stringify({ pending: descargasPendientes, playlist: playlistDomingo }) // Preserva consistencia estructural
+        });
+        
+        if (res.ok) {
+          input.value = '';
+          document.getElementById('yt-preview').classList.remove('show');
+          status.className = "pending-status text-success d-block small mb-2";
+          status.textContent = "✅ ¡Añadido a la cola de descargas!";
+          status.classList.remove('d-none');
+          renderizarColaEspera();
+          setTimeout(() => status.classList.add('d-none'), 3500);
+        }
+      } catch (e) {
+        status.className = "pending-status text-danger d-block small mb-2";
+        status.textContent = "❌ Error en conexión de subida.";
+        status.classList.remove('d-none');
+        descargasPendientes.pop();
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-plus-lg"></i> Agregar';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control Remoto - Alabanzas Iglesia</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <!-- ── HEADER COMO NAVBAR COMPLETO ── -->
+  <header class="custom-navbar w-100 mb-4">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <div class="logo-wrap">
+        <img src="assets/imresizer-logo.jpg" alt="Logo Remanente"
+          onerror="this.style.display='none';this.parentElement.innerHTML='<svg width=\'32\' height=\'32\' viewBox=\'0 0 44 44\' fill=\'none\' class=\'m-2\'><line x1=\'22\' y1=\'4\' x2=\'22\' y2=\'40\' stroke=\'#3A4DC4\' stroke-width=\'3\' stroke-linecap=\'round\'/><line x1=\'11\' y1=\'16\' x2=\'33\' y2=\'16\' stroke=\'#3A4DC4\' stroke-width=\'3\' stroke-linecap=\'round\'/></svg>'">
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span id="estado-conexion" class="badge bg-info bg-opacity-15 text-info rounded-pill px-3 py-2">⏳
+          Conectando...</span>
+        <!-- <button class="btn btn-sm btn-outline-light rounded-pill px-3" onclick="cargarDatos()">🔄 Reintentar</button> -->
+      </div>
+    </div>
+  </header>
+
+  <!-- ── CONTENIDO PRINCIPAL ── -->
+  <div class="container-fluid px-3 px-md-5">
+
+    <div class="text-center mb-4">
+      <h2 class="h4 text-uppercase fw-bold m-0" style="color: #a5b4fc; letter-spacing: 0.05em;">Planificador Domingo 🎶
+      </h2>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <!-- Panel de Videos Disponibles -->
+      <div class="col-12 col-md-6">
+        <div class="card panel-card p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+            <h3 class="h5 m-0 text-white">Videos en PC Iglesia</h3>
+            <span class="badge bg-secondary rounded-pill" id="badge-disponibles">0</span>
+          </div>
+
+          <div class="search-container position-relative mb-3">
+            <span class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+            <input type="text" class="form-control" id="buscar" placeholder="Buscar video..."
+              oninput="filtrar(this.value)">
+          </div>
+
+          <div class="scroll-list">
+            <ul id="lista-disponibles" class="list-group p-0">
+              <li class="list-group-item text-center text-muted">Esperando conexión...</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel de Playlist del Domingo -->
+      <div class="col-12 col-md-6">
+        <div class="card panel-card p-3 d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+            <h3 class="h5 m-0 text-white">Playlist del Domingo</h3>
+            <span class="badge bg-primary rounded-pill" id="badge-domingo">0</span>
+          </div>
+
+          <div class="scroll-list flex-grow-1">
+            <ul id="lista-domingo" class="list-group p-0"></ul>
+          </div>
+
+          <button class="btn btn-primary w-100 py-2 mt-3 fw-bold shadow-sm" id="btn-guardar"
+            onclick="guardarPlaylist()">
+            💾 Guardar Playlist
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FOOTER EXTENDIDO ── -->
+
+
+  </div>
+  <footer class="custom-footer p-3 d-flex flex-column flex-md-row align-items-center gap-3 justify-content-between">
+    <div class="header-text">
+      <div
+        class="d-flex flex-column flex-md-row align-items-center align-items-md-baseline gap-2 gap-md-3 text-center text-md-start">
+        <h1>Remanente del Dios Vivo y Eterno</h1>
+        <p>Ministerio Multimedia · Alabanza · Predicación</p>
+      </div>
+      <div class="gold-rule"></div>
+    </div>
+    <!-- <div class="badge bg-dark bg-opacity-50 border border-secondary p-2 d-flex align-items-center gap-2 rounded-pill">
+        <span class="pulse-dot"></span>
+        <span style="font-size: 0.75rem;">Panel Activo</span>
+      </div> -->
+  </footer>
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ── CONTROLADOR JAVASCRIPT ── -->
+  <script src="js/script.js"></script>
+</body>
+
+</html>
