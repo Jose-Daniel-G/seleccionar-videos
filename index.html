@@ -5,413 +5,249 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Control Remoto - Alabanzas Iglesia</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
-    /* ── Variables de paleta de colores y estilos globales ── */
+    /* ── Variables de estilo personalizadas ── */
     :root {
       --gold: #c9a84c;
       --gold-dim: rgba(201, 168, 76, 0.5);
       --blue-light: #3a4dc4;
       --pearl-muted: #a3a3a3;
-      --pearl-dim: #cbd5e1;
-    }
-
-    * { 
-      box-sizing: border-box;
+      --bg-dark: #1e1e24;
+      --bg-panel: #2a2a35;
     }
 
     body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: #1e1e24;
+      background-color: var(--bg-dark);
       color: #fff;
-      margin: 0;
-      padding: 20px;
+      font-family: "Segoe UI", Arial, sans-serif;
     }
 
-    /* ── Estructura de la aplicación ── */
-    .app {
-      position: relative;
-      z-index: 1;
-      max-width: 1260px;
-      margin: 0 auto;
-      padding: 1.5rem 1.5rem 3rem;
-    }
-
-    /* ── Header Estilizado ── */
-    header {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      background: #2a2a35;
-      padding: 1.2rem;
-      border-radius: 8px;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    /* ── Header Estilo Navbar ── */
+    .custom-navbar {
+      background-color: var(--bg-panel);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
     .logo-wrap {
-      width: 78px;
-      height: 78px;
-      flex-shrink: 0;
+      width: 54px;
+      height: 54px;
       border-radius: 50%;
       overflow: hidden;
       border: 2px solid var(--gold-dim);
-      box-shadow: 0 0 28px rgba(201, 168, 76, 0.2), 0 0 60px rgba(32, 51, 160, 0.3);
-      position: relative;
-    }
-
-    .logo-wrap::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
     }
 
     .logo-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
     }
 
-    .header-text {
-      flex: 1;
+    /* ── Footer Estilizado ── */
+    .custom-footer {
+      background-color: var(--bg-panel);
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
     }
 
-    header h1 {
+    footer h1 {
       font-family: 'Cinzel', serif;
-      font-size: 1.45rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.05em;
       color: var(--gold);
       text-transform: uppercase;
-      line-height: 1.2;
       margin: 0;
-      text-shadow: 0 0 40px rgba(201, 168, 76, 0.3);
     }
 
-    header p {
-      font-size: 0.72rem;
+    footer p {
+      font-size: 0.75rem;
       color: var(--pearl-muted);
-      letter-spacing: 0.24em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      margin: 0.3rem 0 0 0;
+      margin: 0;
     }
 
     .gold-rule {
-      width: 56px;
+      width: 100%;
+      max-width: 250px;
       height: 1.5px;
-      background: linear-gradient(to right, transparent, var(--gold), transparent);
-      margin-top: 0.6rem;
+      background: linear-gradient(to right, var(--gold), transparent);
+      margin-top: 0.4rem;
       opacity: 0.7;
     }
 
-    /* Status indicator en header */
-    .now-badge {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 0.9rem;
-      background: rgba(32, 51, 160, 0.15);
-      border: 1px solid rgba(32, 51, 160, 0.3);
-      border-radius: 20px;
-      font-size: 0.68rem;
-      color: var(--pearl-dim);
-      letter-spacing: 0.05em;
-      flex-shrink: 0;
-    }
-
-    .now-badge .dot {
-      width: 6px;
-      height: 6px;
+    /* Indicador de estado animado */
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: var(--blue-light);
-      animation: pulse-dot 2s ease infinite;
-    }
-
-    .now-badge.playing .dot {
-      background: var(--gold);
-    }
-
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.7); }
-    }
-
-    /* ── Títulos y Conexión ── */
-    h2.seccion-titulo {
-      text-align: center;
-      color: #6366f1;
-      margin-top: 0;
-      margin-bottom: 8px;
-    }
-
-    .panel h2 {
-      margin-top: 0;
-      border-bottom: 2px solid #3f3f56;
-      padding-bottom: 8px;
-      font-size: 1.1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #fff;
-    }
-
-    #estado-conexion {
-      text-align: center;
-      font-size: 0.78rem;
-      padding: 6px 12px;
-      border-radius: 20px;
+      background-color: var(--gold);
       display: inline-block;
+      animation: pulse-animation 2s infinite;
     }
 
-    .estado-ok { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
-    .estado-error { background: rgba(239, 68, 68, 0.15); color: #f87171; }
-    .estado-carga { background: rgba(79, 70, 229, 0.15); color: #a5b4fc; }
-
-    /* ── Contenedores de Listas (Paneles) ── */
-    .container {
-      display: flex;
-      gap: 20px;
-      max-width: 1200px;
-      margin: 16px auto 0;
-      height: 70vh;
+    @keyframes pulse-animation {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(201, 168, 76, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); }
     }
 
-    .panel {
-      flex: 1;
-      background: #2a2a35;
-      border-radius: 8px;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    /* ── Contenedores de Listas Estilo App ── */
+    .panel-card {
+      background-color: var(--bg-panel) !important;
+      border: none !important;
+      border-radius: 12px !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
-    .badge {
-      font-size: 0.7rem;
-      background: #3f3f56;
-      padding: 2px 8px;
-      border-radius: 10px;
-      color: #a5b4fc;
-    }
-
-    /* ── Buscador ── */
-    .search-wrap {
-      position: relative;
-      margin-bottom: 12px;
-    }
-
-    .search-wrap svg {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0.4;
-      pointer-events: none;
-    }
-
-    .search-input {
-      width: 100%;
-      background: #3f3f56;
-      border: 1px solid #555570;
-      border-radius: 6px;
-      color: #fff;
-      padding: 8px 10px 8px 32px;
-      font-size: 0.85rem;
-      outline: none;
-    }
-
-    .search-input:focus {
-      border-color: #4f46e5;
-    }
-
-    /* ── Listado de Ítems ── */
-    .list {
+    .scroll-list {
+      height: 50vh;
       overflow-y: auto;
-      flex: 1;
-      list-style: none;
-      padding: 0;
-      margin: 0;
     }
 
-    li {
-      background: #3f3f56;
-      padding: 9px 10px;
+    .list-group-item {
+      background-color: #3f3f56 !important;
+      color: #fff !important;
+      border: 1px solid #4e4e66 !important;
       margin-bottom: 6px;
-      border-radius: 4px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background 0.15s;
-      font-size: 0.85rem;
+      border-radius: 6px !important;
+      transition: background-color 0.2s;
     }
 
-    li:hover {
-      background: #4f46e5;
+    .list-group-item:hover {
+      background-color: #4f46e5 !important;
     }
 
-    li .nombre {
-      flex: 1;
-      min-width: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-right: 8px;
+    .ya-en-lista {
+      opacity: 0.4;
     }
 
-    li.ya-en-lista {
-      opacity: 0.45;
+    .search-container .form-control {
+      background-color: #3f3f56;
+      border: 1px solid #555570;
+      color: #fff;
+      padding-left: 2.5rem;
     }
 
-    /* ── Botones ── */
-    .btn {
-      background: #4f46e5;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 10px;
-      font-size: 1rem;
-      transition: background 0.2s;
+    .search-container .form-control:focus {
+      background-color: #3f3f56;
+      color: #fff;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
     }
 
-    .btn:hover:not(:disabled) { background: #4338ca; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .btn-add { background: #22c55e; border: none; color: white; padding: 4px 9px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; flex-shrink: 0; }
-    .btn-remove { background: #ef4444; border: none; color: white; padding: 4px 9px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; flex-shrink: 0; }
-    .btn-up, .btn-down { background: #6366f1; border: none; color: white; padding: 3px 7px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; flex-shrink: 0; }
-    
-    .btn-reload {
-      background: #6366f1;
-      border: none;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.75rem;
-      margin-left: 8px;
-      transition: background 0.2s;
-    }
-    .btn-reload:hover { background: #4f46e5; }
-
-    /* ── Estados vacíos y Debugger ── */
-    .empty {
-      text-align: center;
-      color: #aaa;
-      padding: 30px 10px;
-      font-size: 0.85rem;
-      line-height: 1.8;
-    }
-
-    .debug-box {
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 6px;
-      padding: 10px;
-      font-size: 0.7rem;
-      color: #f87171;
-      font-family: monospace;
-      white-space: pre-wrap;
-      margin-top: 8px;
-      max-height: 120px;
-      overflow-y: auto;
-    }
-
-    .pasos {
-      background: rgba(79, 70, 229, 0.1);
-      border: 1px solid #4f46e5;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-top: 8px;
-      font-size: 0.78rem;
-      line-height: 1.9;
-      text-align: left;
-    }
-
-    .pasos strong { color: #a5b4fc; }
-
-    /* ── Diseño Responsivo (Mobile) ── */
-    @media (max-width: 860px) {
-      header {
-        flex-direction: column;
-        text-align: center;
-      }
-
+    @media (max-width: 767.98px) {
+      /* Forzar un tamaño de contenedor ideal para celulares */
+      .scroll-list {
+          /* En celular: se adapta al contenido (elástico), pero se clava a los ~5 elementos */
+          height: auto;
+          max-height: 220px; 
+          overflow-y: auto;
+        }
       .gold-rule {
-        margin: 0.6rem auto 0;
-      }
-
-      .now-badge {
-        display: none;
-      }
-
-      .container {
-        flex-direction: column;
-        height: auto;
-      }
-
-      .panel {
-        height: 45vh;
+        margin: 0.4rem auto 0 !important;
+        background: linear-gradient(to right, transparent, var(--gold), transparent);
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="app">
-    <header>
+
+  <!-- ── HEADER COMO NAVBAR COMPLETO ── -->
+  <header class="custom-navbar w-100 mb-4">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
       <div class="logo-wrap">
         <img src="assets/imresizer-logo.jpg" alt="Logo Remanente"
-          onerror="this.style.display='none';this.parentElement.innerHTML='<svg width=\'44\' height=\'44\' viewBox=\'0 0 44 44\' fill=\'none\'><line x1=\'22\' y1=\'4\' x2=\'22\' y2=\'40\' stroke=\'#3A4DC4\' stroke-width=\'2.5\' stroke-linecap=\'round\'/><line x1=\'11\' y1=\'16\' x2=\'33\' y2=\'16\' stroke=\'#3A4DC4\' stroke-width=\'2.5\' stroke-linecap=\'round\'/></svg>'">
+          onerror="this.style.display='none';this.parentElement.innerHTML='<svg width=\'32\' height=\'32\' viewBox=\'0 0 44 44\' fill=\'none\' class=\'m-2\'><line x1=\'22\' y1=\'4\' x2=\'22\' y2=\'40\' stroke=\'#3A4DC4\' stroke-width=\'3\' stroke-linecap=\'round\'/><line x1=\'11\' y1=\'16\' x2=\'33\' y2=\'16\' stroke=\'#3A4DC4\' stroke-width=\'3\' stroke-linecap=\'round\'/></svg>'">
       </div>
+      <div class="d-flex align-items-center gap-2">
+        <span id="estado-conexion" class="badge bg-info bg-opacity-15 text-info rounded-pill px-3 py-2">⏳ Conectando...</span>
+        <!-- <button class="btn btn-sm btn-outline-light rounded-pill px-3" onclick="cargarDatos()">🔄 Reintentar</button> -->
+      </div>
+    </div>
+  </header>
+
+  <!-- ── CONTENIDO PRINCIPAL ── -->
+  <div class="container-fluid px-3 px-md-5">
+    
+    <div class="text-center mb-4">
+      <h2 class="h4 text-uppercase fw-bold m-0" style="color: #a5b4fc; letter-spacing: 0.05em;">Planificador Domingo 🎶</h2>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <!-- Panel de Videos Disponibles -->
+      <div class="col-12 col-md-6">
+        <div class="card panel-card p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+            <h3 class="h5 m-0 text-white">Videos en PC Iglesia</h3>
+            <span class="badge bg-secondary rounded-pill" id="badge-disponibles">0</span>
+          </div>
+          
+          <div class="search-container position-relative mb-3">
+            <span class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+            <input type="text" class="form-control" id="buscar" placeholder="Buscar video..." oninput="filtrar(this.value)">
+          </div>
+
+          <div class="scroll-list">
+            <ul id="lista-disponibles" class="list-group p-0">
+              <li class="list-group-item text-center text-muted">Esperando conexión...</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel de Playlist del Domingo -->
+      <div class="col-12 col-md-6">
+        <div class="card panel-card p-3 d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+            <h3 class="h5 m-0 text-white">Playlist del Domingo</h3>
+            <span class="badge bg-primary rounded-pill" id="badge-domingo">0</span>
+          </div>
+
+          <div class="scroll-list flex-grow-1">
+            <ul id="lista-domingo" class="list-group p-0"></ul>
+          </div>
+
+          <button class="btn btn-primary w-100 py-2 mt-3 fw-bold shadow-sm" id="btn-guardar" onclick="guardarPlaylist()">
+            💾 Guardar Playlist
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FOOTER EXTENDIDO ── -->
+
+
+  </div>
+    <footer class="custom-footer p-3 d-flex flex-column flex-md-row align-items-center gap-3 justify-content-between">
       <div class="header-text">
-        <h1>Remanente del Dios Vivo y Eterno</h1>
-        <p>Ministerio Multimedia · Alabanza · Predicación</p>
+        <div class="d-flex flex-column flex-md-row align-items-center align-items-md-baseline gap-2 gap-md-3 text-center text-md-start">
+          <h1>Remanente del Dios Vivo y Eterno</h1>
+          <p>Ministerio Multimedia · Alabanza · Predicación</p>
+        </div>
         <div class="gold-rule"></div>
       </div>
-      <div class="now-badge playing">
-        <div class="dot"></div>
-        <span>Panel Activo</span>
-      </div>
-    </header>
+      <!-- <div class="badge bg-dark bg-opacity-50 border border-secondary p-2 d-flex align-items-center gap-2 rounded-pill">
+        <span class="pulse-dot"></span>
+        <span style="font-size: 0.75rem;">Panel Activo</span>
+      </div> -->
+    </footer>
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <h2 class="seccion-titulo">Planificador Domingo 🎶</h2>
-    
-    <div style="text-align:center; margin-bottom: 10px;">
-      <span id="estado-conexion" class="estado-carga">⏳ Conectando...</span>
-      <button class="btn-reload" onclick="cargarDatos()" title="Reintentar conexión">🔄 Reintentar</button>
-    </div>
-
-    <div class="container">
-      <!-- Panel de Videos Disponibles -->
-      <div class="panel">
-        <h2>Videos en PC Iglesia <span class="badge" id="badge-disponibles">0</span></h2>
-        <div class="search-wrap">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input type="text" class="search-input" id="buscar" placeholder="Buscar video..." oninput="filtrar(this.value)">
-        </div>
-        <ul id="lista-disponibles" class="list">
-          <li><span class="nombre">Esperando conexión...</span></li>
-        </ul>
-      </div>
-
-      <!-- Panel de Playlist -->
-      <div class="panel">
-        <h2>Playlist del Domingo <span class="badge" id="badge-domingo">0</span></h2>
-        <ul id="lista-domingo" class="list"></ul>
-        <button class="btn" id="btn-guardar" onclick="guardarPlaylist()">💾 Guardar Playlist</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- ── CONTROLADOR JAVASCRIPT ── -->
   <script>
     const API_KEY = '$2a$10$FC02j5gbHIHKA.wnoYQNqegrrC4EBf/gCyx1lR/oBRGi99Bj7aemC';
     const BIN_VIDEOS = '6a4171f1da38895dfe0cb6b8';
@@ -423,8 +259,12 @@
 
     function setEstado(msg, tipo) {
       const el = document.getElementById('estado-conexion');
-      el.textContent = msg;
-      el.className = 'estado-' + tipo;
+      el.innerHTML = msg;
+      
+      el.className = "badge rounded-pill px-3 py-2 ";
+      if (tipo === 'ok') el.classList.add('bg-success', 'bg-opacity-25', 'text-success');
+      else if (tipo === 'error') el.classList.add('bg-danger', 'bg-opacity-25', 'text-danger');
+      else el.classList.add('bg-info', 'bg-opacity-25', 'text-info');
     }
 
     async function fetchBin(binId) {
@@ -454,24 +294,16 @@
     }
 
     async function cargarDatos() {
-      setEstado('⏳ Leyendo videos de la iglesia...', 'carga');
+      setEstado('⏳ Leyendo videos...', 'carga');
       const panelDisp = document.getElementById('lista-disponibles');
-      panelDisp.innerHTML = '<li><span class="nombre">Conectando con JSONBin...</span></li>';
+      panelDisp.innerHTML = '<li class="list-group-item text-center text-info">Conectando...</li>';
 
       try {
         const dataVideos = await fetchBin(BIN_VIDEOS);
         const todos = extraerVideos(dataVideos.record);
 
         if (!todos) {
-          const estructura = JSON.stringify(dataVideos.record, null, 2);
-          setEstado('⚠️ Estructura inesperada en el Bin de videos', 'error');
-          panelDisp.innerHTML = `
-            <div class="empty">
-              El Bin de videos tiene una estructura que no se reconoce.<br>
-              <strong>Abre la app de la iglesia</strong> para que suba los datos correctos.<br><br>
-              <small style="color:#888">Estructura recibida:</small>
-            </div>
-            <div class="debug-box">${estructura.substring(0, 500)}</div>`;
+          setEstado('⚠️ Error Estructura', 'error');
           return;
         }
 
@@ -483,48 +315,23 @@
         try {
           const dataPlay = await fetchBin(BIN_PLAYLIST);
           const raw = dataPlay.record;
-          const arr = Array.isArray(raw?.playlist) ? raw.playlist
-            : Array.isArray(raw) ? raw : [];
+          const arr = Array.isArray(raw?.playlist) ? raw.playlist : Array.isArray(raw) ? raw : [];
           playlistDomingo = arr.filter(x => x && x !== 'inicio');
         } catch (playErr) {
-          console.warn('Playlist previa no disponible:', playErr.message);
           playlistDomingo = [];
         }
 
         if (videosIglesia.length === 0) {
-          setEstado(`⚠️ Conexión OK pero no hay videos en la carpeta todavía`, 'error');
-          panelDisp.innerHTML = `
-            <div class="empty">
-              JSONBin respondió correctamente pero la carpeta<br>
-              <strong>C:\\Videos\\alabanzas</strong> parece estar vacía.<br><br>
-              <strong>Pasos para solucionar:</strong>
-            </div>
-            <div class="pasos">
-              1. Abre la app <strong>Remanente Multimedia</strong> en la PC de la iglesia<br>
-              2. Espera 5 segundos a que sincronice automáticamente<br>
-              3. Haz clic en 🔄 <strong>Reintentar</strong> arriba
-            </div>`;
+          setEstado(`⚠️ Carpeta vacía`, 'error');
           return;
         }
 
-        setEstado(`✅ ${videosIglesia.length} videos cargados`, 'ok');
+        // LINEA MODIFICADA: Ahora pasa el HTML del icono correctamente
+        setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length} videos`, 'ok');
         renderizarListas();
 
       } catch (e) {
-        const esCors = e.message.includes('Failed to fetch') || e.message.includes('NetworkError');
-        setEstado('❌ ' + (esCors ? 'Error de red (posible CORS)' : e.message), 'error');
-
-        panelDisp.innerHTML = `
-          <div class="empty">No se pudo cargar la lista de videos.</div>
-          <div class="debug-box">Error: ${e.message}</div>
-          <div class="pasos">
-            <strong>Posibles causas:</strong><br>
-            ${esCors
-            ? '• El navegador bloqueó la petición (CORS).<br>  Intenta abrir este archivo desde un servidor local o usa Chrome sin restricciones.'
-            : '• Verifica que tienes internet.<br>• Verifica que el API Key de JSONBin sea correcto.<br>• El Bin puede haber sido eliminado o privado.'
-          }<br><br>
-            Haz clic en 🔄 <strong>Reintentar</strong> para intentar de nuevo.
-          </div>`;
+        setEstado('❌ Error Red', 'error');
       }
     }
 
@@ -543,18 +350,19 @@
       document.getElementById('badge-disponibles').textContent = lista.length;
 
       if (!lista.length) {
-        container.innerHTML = `<div class="empty">Sin resultados para "${filtroActual}"</div>`;
+        container.innerHTML = `<div class="p-3 text-center text-muted small">Sin resultados</div>`;
         return;
       }
       container.innerHTML = '';
       lista.forEach(video => {
         const yaEsta = enLista.has(video.filename);
         const li = document.createElement('li');
-        if (yaEsta) li.classList.add('ya-en-lista');
+        li.className = `list-group-item d-flex justify-content-between align-items-center py-2 px-3 ${yaEsta ? 'ya-en-lista' : ''}`;
+        
         const fname = video.filename.replace(/'/g, "\\'");
         li.innerHTML = `
-          <span class="nombre" title="${video.name}">${video.name}</span>
-          <button class="btn-add" onclick="agregar('${fname}')" ${yaEsta ? 'disabled style="opacity:0.35"' : ''}>＋</button>`;
+          <span class="text-truncate me-2" title="${video.name}">${video.name}</span>
+          <button class="btn btn-sm btn-success px-2 py-0" onclick="agregar('${fname}')" ${yaEsta ? 'disabled style="opacity:0.2"' : ''}>＋</button>`;
         container.appendChild(li);
       });
     }
@@ -563,7 +371,7 @@
       const container = document.getElementById('lista-domingo');
       document.getElementById('badge-domingo').textContent = playlistDomingo.length;
       if (!playlistDomingo.length) {
-        container.innerHTML = `<div class="empty">Agrega videos desde la lista izquierda.<br>Se reproducirán en este orden el domingo.</div>`;
+        container.innerHTML = `<div class="p-3 text-center text-muted small">Playlist vacía</div>`;
         return;
       }
       container.innerHTML = '';
@@ -571,12 +379,13 @@
         const info = videosIglesia.find(v => v.filename === filename);
         const nombre = info ? info.name : filename;
         const li = document.createElement('li');
+        li.className = "list-group-item d-flex justify-content-between align-items-center py-2 px-3";
         li.innerHTML = `
-          <span class="nombre" title="${nombre}">${i + 1}. ${nombre}</span>
-          <div style="display:flex;gap:4px;flex-shrink:0">
-            <button class="btn-up"   onclick="mover(${i},-1)" ${i === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
-            <button class="btn-down" onclick="mover(${i},+1)" ${i === playlistDomingo.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
-            <button class="btn-remove" onclick="quitar(${i})">✕</button>
+          <span class="text-truncate me-2" title="${nombre}">${i + 1}. ${nombre}</span>
+          <div class="d-flex gap-1 flex-shrink-0">
+            <button class="btn btn-sm btn-secondary py-0 px-1" onclick="mover(${i},-1)" ${i === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+            <button class="btn btn-sm btn-secondary py-0 px-1" onclick="mover(${i},+1)" ${i === playlistDomingo.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+            <button class="btn btn-sm btn-danger py-0 px-2" onclick="quitar(${i})">✕</button>
           </div>`;
         container.appendChild(li);
       });
@@ -587,7 +396,8 @@
     function agregar(filename) {
       if (!playlistDomingo.includes(filename)) { playlistDomingo.push(filename); renderizarListas(); }
     }
-    function quitar(i) { playlistDomingo.splice(i, 1); renderDomingo(); }
+    function quitar(i) { playlistDomingo.splice(i, 1); renderizarListas(); }
+    
     function mover(i, dir) {
       const j = i + dir;
       if (j < 0 || j >= playlistDomingo.length) return;
@@ -605,16 +415,18 @@
           body: JSON.stringify({ playlist: playlistDomingo, savedAt: new Date().toISOString() })
         });
         if (res.ok) {
+          btn.className = "btn btn-success w-100 py-2 mt-3 fw-bold shadow-sm";
           btn.textContent = '✅ Guardado';
-          setTimeout(() => { btn.textContent = '💾 Guardar Playlist'; btn.disabled = false; }, 2500);
+          setTimeout(() => { 
+            btn.className = "btn btn-primary w-100 py-2 mt-3 fw-bold shadow-sm";
+            btn.textContent = '💾 Guardar Playlist'; 
+            btn.disabled = false; 
+          }, 2500);
         } else {
-          const err = await res.text();
-          alert('Error al guardar: ' + err.substring(0, 200));
-          btn.textContent = '💾 Guardar Playlist'; btn.disabled = false;
+          btn.disabled = false; btn.textContent = '💾 Guardar Playlist';
         }
       } catch (e) {
-        alert('Error de red: ' + e.message);
-        btn.textContent = '💾 Guardar Playlist'; btn.disabled = false;
+        btn.disabled = false; btn.textContent = '💾 Guardar Playlist';
       }
     }
 
