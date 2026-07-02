@@ -1,207 +1,397 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control Remoto - Alabanzas Iglesia</title>
+  <title>Planificador Domingo · Remanente</title>
 
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="icon" type="image/png" href="assets/logo.png">
+  <!-- Bootstrap 5 + Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
   <style>
-    /* ── Sección de Pendientes ── */
-    .pending-section {
-      margin-top: 1.2rem;
-      padding-top: 1.2rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    :root {
+      --gold: #c9a84c;
+      --gold-dim: rgba(201,168,76,0.45);
+      --blue-light: #3a4dc4;
+      --pearl-muted: #a3a3a3;
+      --bg-dark: #1e1e24;
+      --bg-panel: #2a2a35;
+      --bg-item: #3f3f56;
+      --bg-item-hover: #4f46e5;
+      --border-item: #4e4e66;
     }
 
-    .pending-section-title {
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #fff;
+      font-family: "Lato", "Segoe UI", Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Navbar ── */
+    .navbar {
+      background-color: var(--bg-panel);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+      padding: 10px 20px;
+    }
+    .navbar-brand {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: var(--gold) !important;
+      letter-spacing: 0.04em;
+    }
+    .logo-wrap {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--gold-dim);
+      box-shadow: 0 0 10px rgba(201,168,76,0.2);
+      flex-shrink: 0;
+    }
+    .logo-wrap img { width:100%; height:100%; object-fit:cover; }
+
+    /* ── Estado conexión ── */
+    #estado-conexion { font-size: 0.82rem; }
+
+    /* ── Panel cards ── */
+    .panel-card {
+      background-color: var(--bg-panel);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .panel-title {
       font-size: 0.88rem;
       font-weight: 700;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.03em;
+      color: #e2e2f0;
     }
 
-    .badge-pending-count {
-      background-color: rgba(201, 168, 76, 0.15);
+    /* ── Lista ── */
+    .scroll-list {
+      height: 42vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--bg-item) transparent;
+    }
+    @media (max-width: 767px) { .scroll-list { height: 32vh; } }
+
+    .list-group-item {
+      background-color: var(--bg-item) !important;
+      color: #fff !important;
+      border: 1px solid var(--border-item) !important;
+      margin-bottom: 5px;
+      border-radius: 7px !important;
+      transition: background-color 0.15s;
+      font-size: 0.83rem;
+    }
+    .list-group-item:hover { background-color: #4a4a6a !important; }
+    .ya-en-lista { opacity: 0.38; }
+
+    /* ── Search ── */
+    .search-wrap {
+      position: relative;
+    }
+    .search-wrap .bi {
+      position: absolute; left: 10px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--pearl-muted); font-size: 0.85rem;
+    }
+    .search-wrap input {
+      background-color: var(--bg-item);
+      border: 1px solid var(--border-item);
+      color: #fff;
+      border-radius: 7px;
+      padding: 7px 10px 7px 32px;
+      font-size: 0.82rem;
+      width: 100%;
+    }
+    .search-wrap input::placeholder { color: rgba(255,255,255,0.3); }
+    .search-wrap input:focus {
+      outline: none;
+      border-color: var(--blue-light);
+      box-shadow: 0 0 0 3px rgba(58,77,196,0.25);
+    }
+
+    /* ── Badge ── */
+    .badge-count {
+      background: rgba(201,168,76,0.2);
       color: var(--gold);
-      font-size: 0.72rem;
+      border: 1px solid var(--gold-dim);
+      border-radius: 20px;
+      padding: 2px 9px;
+      font-size: 0.7rem;
       font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid rgba(201, 168, 76, 0.3);
+    }
+    .badge-pending-count {
+      background: rgba(58,77,196,0.25);
+      color: #818cf8;
+      border: 1px solid rgba(99,102,241,0.4);
+      border-radius: 20px;
+      padding: 2px 9px;
+      font-size: 0.7rem;
+      font-weight: 700;
     }
 
+    /* ── Botones ── */
+    .btn-add-video {
+      background: rgba(34,197,94,0.15);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #4ade80;
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: background .15s;
+      flex-shrink: 0;
+    }
+    .btn-add-video:hover { background: rgba(34,197,94,0.28); }
+    .btn-add-video:disabled { opacity: 0.25; cursor: not-allowed; }
+
+    .btn-order {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #ccc;
+      border-radius: 5px;
+      padding: 1px 7px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .btn-order:hover:not(:disabled) { background: rgba(255,255,255,0.15); }
+    .btn-remove-item {
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.3);
+      color: #f87171;
+      border-radius: 5px;
+      padding: 1px 8px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .btn-remove-item:hover { background: rgba(248,113,113,0.25); }
+
+    .btn-save {
+      background: var(--blue-light);
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      width: 100%;
+      cursor: pointer;
+      transition: background .2s;
+      margin-top: 10px;
+    }
+    .btn-save:hover { background: #4a5ed4; }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-save.saved { background: #16a34a; }
+
+    /* ── Panel pendientes ── */
+    .pending-section {
+      background: rgba(58,77,196,0.08);
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+    .pending-section-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #818cf8;
+      margin-bottom: 4px;
+    }
     .pending-section-hint {
-      font-size: 0.75rem;
-      color: var(--pearl-muted);
-      margin-bottom: 0.8rem;
-      line-height: 1.3;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 10px;
     }
 
-    /* Fila de Input y Botón de Pendientes */
     .yt-input-row {
-      display: flex;
-      gap: 6px;
+      display: flex; gap: 7px; margin-bottom: 8px;
     }
-
     .yt-input-row input {
       flex: 1;
-      background-color: rgba(0, 0, 0, 0.25);
-      border: 1px solid var(--border-item);
-      border-radius: 6px;
-      padding: 0.45rem 0.6rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 7px;
       color: #fff;
-      font-size: 0.82rem;
+      padding: 7px 10px;
+      font-size: 0.8rem;
+      min-width: 0;
     }
-
+    .yt-input-row input::placeholder { color: rgba(255,255,255,0.28); }
     .yt-input-row input:focus {
       outline: none;
-      border-color: var(--gold);
+      border-color: #818cf8;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
     }
-
     .btn-add-pending {
-      background-color: var(--gold);
-      color: #1e1e24;
-      border: none;
-      font-weight: 700;
-      font-size: 0.82rem;
-      border-radius: 6px;
-      padding: 0 0.8rem;
-      transition: background-color 0.2s ease;
+      background: rgba(99,102,241,0.25);
+      border: 1px solid rgba(99,102,241,0.45);
+      color: #a5b4fc;
+      border-radius: 7px;
+      padding: 7px 13px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+      flex-shrink: 0;
     }
+    .btn-add-pending:hover { background: rgba(99,102,241,0.4); }
+    .btn-add-pending:disabled { opacity: 0.45; cursor: not-allowed; }
 
-    .btn-add-pending:hover {
-      background-color: #dfba53;
-    }
-
-    .btn-add-pending:disabled {
-      opacity: 0.6;
-    }
-
-    /* Vista previa de miniatura */
+    /* Preview miniatura YT */
     .yt-preview {
       display: none;
       align-items: center;
       gap: 10px;
-      background-color: rgba(0, 0, 0, 0.15);
-      border: 1px dashed var(--gold-dim);
-      border-radius: 6px;
-      padding: 6px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 7px;
+      padding: 8px 10px;
       margin-bottom: 8px;
     }
-
-    .yt-preview.show {
-      display: flex;
-    }
-
     .yt-preview img {
-      width: 56px;
-      height: 42px;
-      object-fit: cover;
-      border-radius: 4px;
+      width: 72px; height: 48px;
+      object-fit: cover; border-radius: 4px; flex-shrink: 0;
     }
+    .yt-preview span { font-size: 0.75rem; color: rgba(255,255,255,0.65); }
 
-    #yt-preview-label {
-      font-size: 0.75rem;
-      color: var(--text-pearl);
-    }
-
-    /* Lista de canciones en espera */
+    /* Lista pendientes */
     .pending-list {
-      list-group-style: none;
-      padding: 0;
-      margin: 8px 0 0 0;
-      max-height: 150px;
-      overflow-y: auto;
+      list-style: none; margin: 0; padding: 0;
+      display: flex; flex-direction: column; gap: 5px;
+      max-height: 200px; overflow-y: auto;
     }
-
-    .empty-hint {
+    .pending-list li {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 7px;
+      padding: 7px 10px;
       font-size: 0.78rem;
-      color: var(--pearl-muted);
-      font-style: italic;
+    }
+    .pending-list li img {
+      width: 48px; height: 32px;
+      object-fit: cover; border-radius: 3px; flex-shrink: 0;
+    }
+    .pending-item-info { flex: 1; min-width: 0; }
+    .pending-item-title {
+      color: rgba(255,255,255,0.8);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      display: block;
+    }
+    .pending-item-url {
+      font-size: 0.65rem; color: rgba(255,255,255,0.3);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      display: block;
+    }
+    .btn-del-pending {
+      background: none; border: none;
+      color: #f87171; cursor: pointer; font-size: 0.9rem;
+      padding: 2px 5px; border-radius: 4px; flex-shrink: 0;
+      transition: background .12s;
+    }
+    .btn-del-pending:hover { background: rgba(248,113,113,0.15); }
+
+    /* Status pendientes */
+    .pending-status {
+      font-size: 0.75rem;
+      border-radius: 6px;
+      padding: 5px 10px;
+      margin-bottom: 8px;
+      display: none;
+    }
+    .pending-status.ok    { background: rgba(22,163,74,0.15); color: #4ade80; }
+    .pending-status.error { background: rgba(220,38,38,0.15); color: #f87171; }
+
+    /* Empty states */
+    .empty-hint {
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.28);
+      padding: 10px 0;
     }
 
-    /* Botón Guardar Principal */
-    .btn-save-main {
-      background-color: #4f46e5;
-      color: #fff;
-      font-weight: 700;
-      border: none;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(79, 46, 229, 0.2);
+    /* ── Botón reintentar ── */
+    .btn-retry {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.6);
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
     }
+    .btn-retry:hover { border-color: var(--gold-dim); color: var(--gold); }
 
-    .btn-save-main:hover {
-      background-color: #4338ca;
-    }
-
-    .btn-save-main.saved {
-      background-color: #16a34a !important;
-      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+    /* ── Gold rule footer ── */
+    .gold-rule {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+      margin: 0;
     }
   </style>
 </head>
-
 <body>
 
-  <header class="custom-navbar w-100 mb-4">
-    <div class="container-fluid d-flex justify-content-between align-items-center position-relative">
-
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="d-flex align-items-center gap-2">
       <div class="logo-wrap">
-        <img src="assets/imresizer-logo.jpg" alt="Logo Remanente"
-          onerror="this.style.display='none';this.parentElement.innerHTML='<svg width=\'32\' height=\'32\' viewBox=\'0 0 44 44\' fill=\'none\' class=\'m-2\'><line x1=\'22\' y1=\'4\' x2=\'22\' y2=\'40\' stroke=\'#3A4DC4\' stroke-width=\'3\' stroke-linecap=\'round\'/><line x1=\'11\' y1=\'16\' x2=\'33\' y2=\'16\' stroke=\'#3A4DC4\' stroke-width=\'3\' stroke-linecap=\'round\'/></svg>'">
+        <img src="assets/imresizer-logo.jpg" alt="Logo"
+          onerror="this.style.display='none'">
       </div>
-
-      <div class="text-center mx-auto">
-        <h2 class="h5 text-uppercase fw-bold m-0" style="color: #a5b4fc; letter-spacing: 0.05em;">
-          Planificador Domingo 🎶
-        </h2>
-      </div>
-
-      <div class="d-flex align-items-center gap-2">
-        <span id="estado-conexion" class="badge bg-info bg-opacity-15 text-info rounded-pill px-3 py-2">
-          ⏳ Conectando...
-        </span>
-      </div>
-
+      <span class="navbar-brand mb-0">Remanente · Planificador</span>
     </div>
-  </header>
+    <div class="d-flex align-items-center gap-2">
+      <span id="estado-conexion" class="badge rounded-pill bg-info bg-opacity-25 text-info px-3 py-2">
+        ⏳ Conectando...
+      </span>
+      <button class="btn-retry" onclick="cargarDatos()" title="Reintentar">
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
+    </div>
+  </nav>
 
-  <!-- ── CONTENIDO PRINCIPAL ── -->
-  <div class="container-fluid px-3 px-md-5">
+  <div class="gold-rule"></div>
 
-    <div class="row g-4 mb-4">
-      <!-- Panel de Videos Disponibles -->
+  <!-- Contenido principal -->
+  <div class="container-fluid px-3 py-3" style="max-width:960px; margin:0 auto;">
+    <div class="row g-3">
+
+      <!-- ══ Panel izquierdo: Videos disponibles ══ -->
       <div class="col-12 col-md-6">
-        <div class="card panel-card p-3">
-          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
-            <h3 class="h5 m-0 text-white">Videos en PC Iglesia</h3>
-            <span class="badge bg-secondary rounded-pill" id="badge-disponibles">0</span>
-          </div>
+        <div class="panel-card p-3 h-100">
 
-          <div class="search-container position-relative mb-3">
-            <span class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
+          <!-- Título -->
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="panel-title">
+              <i class="bi bi-collection-play me-1" style="color:var(--gold)"></i>
+              Videos en PC Iglesia
             </span>
-            <input type="text" class="form-control" id="buscar" placeholder="Buscar video..."
-              oninput="filtrar(this.value)">
+            <span class="badge-count" id="badge-disponibles">0</span>
           </div>
 
-          <div class="scroll-list">
-            <ul id="lista-disponibles" class="list-group p-0">
-              <li class="list-group-item text-center text-muted">Esperando conexión...</li>
-            </ul>
+          <!-- Búsqueda -->
+          <div class="search-wrap mb-2">
+            <i class="bi bi-search"></i>
+            <input type="text" id="buscar" placeholder="Buscar video..." oninput="filtrar(this.value)">
           </div>
+
+          <!-- Lista de videos -->
+          <ul class="list-group scroll-list" id="lista-disponibles">
+            <li class="list-group-item text-center text-info" style="font-size:0.8rem">
+              Conectando con JSONBin...
+            </li>
+          </ul>
+
+          <!-- ══ Sección pendientes ══ -->
           <div class="pending-section">
             <div class="d-flex align-items-center gap-2 mb-1">
               <span class="pending-section-title">
@@ -213,254 +403,445 @@
               ¿No está el video? Pega el link de YouTube. La PC de la iglesia lo descarga al abrir Remanente Desktop.
             </p>
 
+            <!-- Preview miniatura -->
             <div class="yt-preview" id="yt-preview">
-              <img id="yt-preview-img" src="" alt="Thumbnail">
+              <img id="yt-preview-img" src="" alt="">
               <span id="yt-preview-label">Video detectado — listo para agregar</span>
             </div>
 
-            <div class="pending-status small mb-2 d-none" id="pending-status"></div>
+            <!-- Status -->
+            <div class="pending-status" id="pending-status"></div>
 
+            <!-- Input + botón -->
             <div class="yt-input-row">
-              <input type="url" id="input-yt-url" placeholder="https://youtube.com/watch?v=..."
+              <input type="url" id="input-yt-url"
+                placeholder="https://youtube.com/watch?v=..."
                 oninput="onYtInput(this.value)">
               <button class="btn-add-pending" id="btn-agregar" onclick="agregarPendiente()">
                 <i class="bi bi-plus-lg"></i> Agregar
               </button>
             </div>
 
+            <!-- Lista pendientes -->
             <ul class="pending-list" id="lista-pendientes">
               <li style="justify-content:center; border:none; background:none;">
-                <span class="empty-hint">Cargando cola de descargas...</span>
+                <span class="empty-hint">Cargando...</span>
               </li>
             </ul>
           </div>
+
         </div>
       </div>
 
-      <!-- Panel de Playlist del Domingo -->
+      <!-- ══ Panel derecho: Playlist del domingo ══ -->
       <div class="col-12 col-md-6">
-        <div class="card panel-card p-3 d-flex flex-column">
-          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
-            <h3 class="h5 m-0 text-white">Playlist del Domingo</h3>
-            <span class="badge bg-primary rounded-pill" id="badge-domingo">0</span>
+        <div class="panel-card p-3 h-100 d-flex flex-column">
+
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="panel-title">
+              <i class="bi bi-calendar2-week me-1" style="color:var(--gold)"></i>
+              Playlist del Domingo
+            </span>
+            <span class="badge-count" id="badge-domingo">0</span>
           </div>
 
-          <div class="scroll-list flex-grow-1">
-            <ul id="lista-domingo" class="list-group p-0"></ul>
-          </div>
+          <ul class="list-group scroll-list flex-grow-1" id="lista-domingo">
+            <li class="list-group-item" style="border:none;background:none;">
+              <div class="empty-hint">Agrega videos desde la lista izquierda.</div>
+            </li>
+          </ul>
 
-          <button class="btn btn-primary w-100 py-2 mt-3 fw-bold shadow-sm" id="btn-guardar"
-            onclick="guardarPlaylist()">
-            💾 Guardar Playlist
+          <button class="btn-save" id="btn-guardar" onclick="guardarPlaylist()">
+            <i class="bi bi-floppy me-1"></i> Guardar Playlist
           </button>
+
         </div>
       </div>
+
     </div>
-
-    <!-- ── FOOTER EXTENDIDO ── -->
-
-
   </div>
-<footer class="custom-footer p-3 d-flex flex-column flex-md-row align-items-center gap-3 justify-content-between" style="display: flex !important; width: 100%;">
-    <div class="header-text" style="flex: 1;">
-      <div class="d-flex flex-column flex-md-row align-items-center align-items-md-baseline gap-2 gap-md-3 text-center text-md-start">
-        <h1>Remanente del Dios Vivo y Eterno</h1>
-        <p>Ministerio Multimedia · Alabanza · Predicación</p>
-      </div>
-      <div class="gold-rule"></div>
-    </div>
-    
-    <!-- ── BLOQUE DE COPYRIGHT FORZADO ── -->
-    <div class="text-center text-md-end text-white-50" style="font-size: 0.78rem; opacity: 0.8; white-space: nowrap; padding-top: 5px;">
-      <span>© 2026 JDG Twins</span>
-    </div>
-  </footer>
-  <!-- <div class="badge bg-dark bg-opacity-50 border border-secondary p-2 d-flex align-items-center gap-2 rounded-pill">
-        <span class="pulse-dot"></span>
-        <span style="font-size: 0.75rem;">Panel Activo</span>
-      </div> -->
-  </footer>
-  <!-- Bootstrap 5 JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- ── CONTROLADOR JAVASCRIPT ── -->
-  <script src="js/script.js"></script>
   <script>
-    /* ── LÓGICA DE VIDEO EN ESPERA / COLA PENDIENTES ── */
-    async function cargarDescargasPendientes() {
-      const lista = document.getElementById('lista-pendientes');
+    const API_KEY      = '$2a$10$FC02j5gbHIHKA.wnoYQNqegrrC4EBf/gCyx1lR/oBRGi99Bj7aemC';
+    const BIN_VIDEOS   = '6a4171f1da38895dfe0cb6b8';
+    const BIN_PLAYLIST = '6a41792df5f4af5e293e5e04';
+    const BIN_PENDING  = 'TU_BIN_PENDING_ID_AQUI';   // ← reemplaza con el ID real
+
+    let videosIglesia   = [];
+    let playlistDomingo = [];
+    let pendingLinks    = [];
+    let filtroActual    = '';
+
+    /* ── Estado conexión ── */
+    function setEstado(msg, tipo) {
+      const el = document.getElementById('estado-conexion');
+      el.innerHTML = msg;
+      el.className = 'badge rounded-pill px-3 py-2 ';
+      if      (tipo === 'ok')    el.classList.add('bg-success','bg-opacity-25','text-success');
+      else if (tipo === 'error') el.classList.add('bg-danger', 'bg-opacity-25','text-danger');
+      else                       el.classList.add('bg-info',   'bg-opacity-25','text-info');
+    }
+
+    /* ── Fetch JSONBin con timeout ── */
+    async function fetchBin(binId) {
+      const ctrl  = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 12000);
       try {
-        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_PENDING}/latest`, {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+          signal: ctrl.signal,
           headers: { 'X-Master-Key': API_KEY }
         });
-        if (res.ok) {
-          const data = await res.json();
-          descargasPendientes = Array.isArray(data.record?.pending) ? data.record.pending : [];
-          renderizarColaEspera();
-        }
-      } catch (e) {
-        console.error("Error leyendo cola pendientes", e);
-        lista.innerHTML = `<li><span class="empty-hint text-danger">⚠️ Error de sincronización</span></li>`;
+        clearTimeout(timer);
+        const text = await res.text();
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return JSON.parse(text);
+      } catch (err) {
+        clearTimeout(timer);
+        if (err.name === 'AbortError') throw new Error('Timeout al conectar con JSONBin.');
+        throw err;
       }
     }
 
-    function renderizarColaEspera() {
+    async function putBin(binId, body) {
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error(`PUT Bin: HTTP ${res.status}`);
+      return res.json();
+    }
+
+    function extraerVideos(record) {
+      if (record && Array.isArray(record.videos)) return record.videos;
+      if (Array.isArray(record))                  return record;
+      if (record && Array.isArray(record.data))   return record.data;
+      return null;
+    }
+
+    /* ── Carga principal ── */
+    async function cargarDatos() {
+      setEstado('⏳ Leyendo videos...', 'carga');
+      const panelDisp = document.getElementById('lista-disponibles');
+      panelDisp.innerHTML = '<li class="list-group-item text-center text-info" style="font-size:.8rem">Conectando...</li>';
+
+      try {
+        const dataVideos = await fetchBin(BIN_VIDEOS);
+        const todos = extraerVideos(dataVideos.record);
+
+        if (!todos) {
+          setEstado('⚠️ Estructura inesperada', 'error');
+          panelDisp.innerHTML = '<li class="list-group-item text-warning text-center" style="font-size:.8rem">Abre Remanente Desktop en la PC de la iglesia para sincronizar.</li>';
+          return;
+        }
+
+        videosIglesia = todos.filter(v =>
+          v && v.filename && !v.isFolder &&
+          /\.(mp4|mkv|avi|webm|mov)$/i.test(v.filename)
+        );
+
+        try {
+          const dataPlay = await fetchBin(BIN_PLAYLIST);
+          const raw = dataPlay.record;
+          const arr = Array.isArray(raw?.playlist) ? raw.playlist
+                    : Array.isArray(raw) ? raw : [];
+          playlistDomingo = arr.filter(x => x && x !== 'inicio');
+        } catch { playlistDomingo = []; }
+
+        /* Pendientes */
+        await cargarPendientes();
+
+        if (!videosIglesia.length) {
+          setEstado('⚠️ Carpeta vacía', 'error');
+          panelDisp.innerHTML = '<li class="list-group-item text-warning text-center" style="font-size:.8rem">La carpeta de alabanzas está vacía. Abre Remanente Desktop.</li>';
+          return;
+        }
+
+        setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length} videos`, 'ok');
+        renderizarListas();
+        iniciarPolling(); // arrancar polling automático
+
+      } catch (e) {
+        setEstado('❌ Error de red', 'error');
+        panelDisp.innerHTML = `<li class="list-group-item text-danger text-center" style="font-size:.8rem">
+          No se pudo conectar. Verifica internet y presiona <strong>reintentar</strong>.<br>
+          <small class="text-muted">${e.message}</small></li>`;
+      }
+    }
+
+    /* ── Pendientes: cargar ── */
+    async function cargarPendientes() {
+      try {
+        const data = await fetchBin(BIN_PENDING);
+        pendingLinks = Array.isArray(data.record?.pending) ? data.record.pending : [];
+      } catch {
+        pendingLinks = [];
+      }
+      renderPendientes();
+    }
+
+    /* ── Pendientes: render ── */
+    function renderPendientes() {
       const lista = document.getElementById('lista-pendientes');
-      const badge = document.getElementById('badge-pendientes');
+      document.getElementById('badge-pendientes').textContent = pendingLinks.length;
 
-      badge.textContent = descargasPendientes.length;
-
-      if (descargasPendientes.length === 0) {
-        lista.innerHTML = `
-          <li style="justify-content:center; border:none; background:none;">
-            <span class="empty-hint">No hay videos en espera</span>
-          </li>`;
+      if (!pendingLinks.length) {
+        lista.innerHTML = `<li style="justify-content:center;border:none;background:none;">
+          <span class="empty-hint">Sin descargas pendientes 🎉</span></li>`;
         return;
       }
 
-      lista.innerHTML = descargasPendientes.map(item => `
-        <li class="d-flex justify-content-between align-items-center" style="gap: 8px;">
-          <div class="d-flex flex-column" style="max-width: 70%;">
-            <span class="text-truncate d-block fw-bold" style="color: var(--gold); font-size: 0.82rem;">
-              ${item.title || 'Video de YouTube'}
-            </span>
-            <span class="text-muted text-truncate d-block" style="font-size: 0.7rem; margin-top:1px;">
-              ${item.url}
-            </span>
+      lista.innerHTML = '';
+      pendingLinks.forEach((item, i) => {
+        const url   = typeof item === 'string' ? item : item.url;
+        const title = typeof item === 'string' ? url  : (item.title || url);
+        const thumb = typeof item === 'object'  ? (item.thumb || '') : '';
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${thumb ? `<img src="${thumb}" alt="" onerror="this.style.display='none'">` : ''}
+          <div class="pending-item-info">
+            <span class="pending-item-title" title="${title}">${title}</span>
+            <span class="pending-item-url">${url}</span>
           </div>
-          <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill" style="font-size:0.65rem; padding: 4px 8px;">
-              🕒 En espera
-            </span>
-            <button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.75rem; border-radius: 4px;" 
-                    onclick="cancelarPendiente('${item.id}')" title="Cancelar descarga">
-              <i class="bi bi-x-lg"></i>
-            </button>
-          </div>
-        </li>
-      `).join('');
+          <button class="btn-del-pending" onclick="quitarPendiente(${i})" title="Quitar">
+            <i class="bi bi-x-lg"></i>
+          </button>`;
+        lista.appendChild(li);
+      });
     }
 
-    async function cancelarPendiente(id) {
-      if (!confirm('¿Estás seguro de que deseas cancelar y eliminar este video de la lista de descargas?')) return;
-
-      const status = document.getElementById('pending-status');
-
-      // Filtrar para remover el elemento seleccionado
-      const itemAEliminar = descargasPendientes.find(item => item.id === id);
-      descargasPendientes = descargasPendientes.filter(item => item.id !== id);
-
-      try {
-        status.className = "pending-status text-warning d-block small mb-2";
-        status.textContent = "⏳ Cancelando en la nube...";
-        status.classList.remove('d-none');
-
-        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_PENDING}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
-          body: JSON.stringify({ pending: descargasPendientes, playlist: playlistDomingo })
-        });
-
-        if (res.ok) {
-          status.className = "pending-status text-success d-block small mb-2";
-          status.textContent = "✅ Descarga cancelada correctamente.";
-          renderizarColaEspera();
-          setTimeout(() => status.classList.add('d-none'), 3000);
-        } else {
-          throw new Error("No se pudo actualizar el servidor");
-        }
-      } catch (e) {
-        status.className = "pending-status text-danger d-block small mb-2";
-        status.textContent = "❌ Error al cancelar en la nube. Revirtiendo...";
-        // Si falla, revertimos el elemento al array local
-        if (itemAEliminar) descargasPendientes.push(itemAEliminar);
-        renderizarColaEspera();
-      }
-    }
-
-    function onYtInput(url) {
-      const preview = document.getElementById('yt-preview');
-      const img = document.getElementById('yt-preview-img');
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-      const match = url.match(regExp);
-
-      if (match && match[2].length === 11) {
-        const videoId = match[2];
-        img.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-        preview.classList.add('show');
+    /* ── Pendientes: preview YouTube ── */
+    function onYtInput(val) {
+      const box   = document.getElementById('yt-preview');
+      const img   = document.getElementById('yt-preview-img');
+      const match = val.match(/(?:youtu\.be\/|[?&]v=)([^#&?]{11})/);
+      if (match) {
+        img.src = `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+        box.style.display = 'flex';
       } else {
-        img.src = '';
-        preview.classList.remove('show');
+        box.style.display = 'none';
       }
     }
 
+    /* ── Pendientes: agregar ── */
     async function agregarPendiente() {
       const input = document.getElementById('input-yt-url');
-      const btn = document.getElementById('btn-agregar');
-      const status = document.getElementById('pending-status');
-      const url = input.value.trim();
+      const btn   = document.getElementById('btn-agregar');
+      const url   = input.value.trim();
 
-      if (!url.includes('youtube.com') && !url.includes('youtu.be')) {
-        status.className = "pending-status text-danger d-block small mb-2";
-        status.textContent = "❌ Link de YouTube inválido.";
-        return;
-      }
+      if (!url) { showPendingStatus('Pega un enlace de YouTube válido.', 'error'); return; }
+
+      const match = url.match(/(?:youtu\.be\/|[?&]v=)([^#&?]{11})/);
+      if (!match) { showPendingStatus('No se reconoce como un enlace de YouTube.', 'error'); return; }
+
+      const videoId = match[1];
+      const duplicado = pendingLinks.some(item => {
+        const u = typeof item === 'string' ? item : item.url;
+        return u === url || u.includes(videoId);
+      });
+      if (duplicado) { showPendingStatus('Ese video ya está en la cola.', 'error'); return; }
 
       btn.disabled = true;
-      btn.innerHTML = '⏳';
+      showPendingStatus('Guardando en la nube...', 'ok');
 
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-      const match = url.match(regExp);
-      const videoId = match ? match[2] : 'Nuevo Link';
-
-      let finalTitle = `Video Pendiente (${videoId})`;
-
-      // 🌟 AUTOMÁTICO: Consultar el título real a YouTube sin pedirlo por prompt
-      try {
-        const responseYt = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
-        if (responseYt.ok) {
-          const ytData = await responseYt.json();
-          if (ytData && ytData.title) {
-            finalTitle = ytData.title; // Extrae el nombre exacto de YouTube
-          }
-        }
-      } catch (errorInfo) {
-        console.error("No se pudo obtener el título de YouTube automáticamente", errorInfo);
-      }
-
-      descargasPendientes.push({
-        id: Date.now().toString(),
-        url: url,
-        title: finalTitle,
-        status: 'pending'
-      });
+      const nuevo = {
+        url,
+        thumb: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+        title: `YouTube · ${videoId}`,
+        addedAt: new Date().toISOString()
+      };
+      pendingLinks.push(nuevo);
 
       try {
-        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_PENDING}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
-          body: JSON.stringify({ pending: descargasPendientes, playlist: playlistDomingo })
-        });
-
-        if (res.ok) {
-          input.value = '';
-          if (document.getElementById('yt-preview')) document.getElementById('yt-preview').classList.remove('show');
-          status.className = "pending-status text-success d-block small mb-2";
-          status.textContent = "✅ ¡Añadido a la cola de descargas!";
-          renderizarColaEspera();
-          setTimeout(() => status.classList.add('d-none'), 3500);
-        }
+        await putBin(BIN_PENDING, { pending: pendingLinks, updatedAt: new Date().toISOString() });
+        input.value = '';
+        document.getElementById('yt-preview').style.display = 'none';
+        renderPendientes();
+        showPendingStatus('✅ Guardado. Se descargará al abrir Remanente Desktop.', 'ok');
       } catch (e) {
-        status.className = "pending-status text-danger d-block small mb-2";
-        status.textContent = "❌ Error en el servidor.";
-        descargasPendientes.pop();
+        pendingLinks.pop();
+        renderPendientes();
+        showPendingStatus('❌ Error al guardar: ' + e.message, 'error');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = 'Agregar';
       }
     }
 
+    /* ── Pendientes: quitar ── */
+    async function quitarPendiente(i) {
+      pendingLinks.splice(i, 1);
+      renderPendientes();
+      try {
+        await putBin(BIN_PENDING, { pending: pendingLinks, updatedAt: new Date().toISOString() });
+      } catch (e) {
+        showPendingStatus('No se pudo sincronizar: ' + e.message, 'error');
+      }
+    }
+
+    function showPendingStatus(msg, tipo) {
+      const el = document.getElementById('pending-status');
+      el.textContent = msg;
+      el.className = 'pending-status ' + tipo;
+      el.style.display = 'block';
+      if (tipo === 'ok') setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+
+    /* ── Filtro ── */
+    function filtrar(val) {
+      filtroActual = val.toLowerCase().trim();
+      renderDisponibles();
+    }
+
+    /* ── Render disponibles ── */
+    function renderDisponibles() {
+      const container = document.getElementById('lista-disponibles');
+      const enLista   = new Set(playlistDomingo);
+      const lista     = filtroActual
+        ? videosIglesia.filter(v => v.name.toLowerCase().includes(filtroActual))
+        : videosIglesia;
+
+      document.getElementById('badge-disponibles').textContent = lista.length;
+
+      if (!lista.length) {
+        container.innerHTML = `<li class="list-group-item text-center text-muted" style="font-size:.8rem;border:none;background:none;">Sin resultados para "${filtroActual}"</li>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      lista.forEach(video => {
+        const yaEsta = enLista.has(video.filename);
+        const li = document.createElement('li');
+        li.className = `list-group-item d-flex justify-content-between align-items-center py-2 px-3 ${yaEsta ? 'ya-en-lista' : ''}`;
+        const fname = video.filename.replace(/'/g, "\\'");
+        li.innerHTML = `
+          <span class="text-truncate me-2" title="${video.name}" style="font-size:.83rem">${video.name}</span>
+          <button class="btn-add-video" onclick="agregar('${fname}')" ${yaEsta ? 'disabled' : ''}>＋</button>`;
+        container.appendChild(li);
+      });
+    }
+
+    /* ── Render domingo ── */
+    function renderDomingo() {
+      const container = document.getElementById('lista-domingo');
+      document.getElementById('badge-domingo').textContent = playlistDomingo.length;
+
+      if (!playlistDomingo.length) {
+        container.innerHTML = `<li class="list-group-item text-center" style="font-size:.8rem;border:none;background:none;">
+          <div class="empty-hint">Agrega videos desde la lista izquierda.<br>Se reproducirán en este orden el domingo.</div></li>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      playlistDomingo.forEach((filename, i) => {
+        const info   = videosIglesia.find(v => v.filename === filename);
+        const nombre = info ? info.name : filename;
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center py-2 px-3';
+        li.innerHTML = `
+          <span class="text-truncate me-2" title="${nombre}" style="font-size:.83rem">${i+1}. ${nombre}</span>
+          <div class="d-flex gap-1 flex-shrink-0">
+            <button class="btn-order" onclick="mover(${i},-1)" ${i===0?'disabled':''}>▲</button>
+            <button class="btn-order" onclick="mover(${i},+1)" ${i===playlistDomingo.length-1?'disabled':''}>▼</button>
+            <button class="btn-remove-item" onclick="quitar(${i})">✕</button>
+          </div>`;
+        container.appendChild(li);
+      });
+    }
+
+    function renderizarListas() { renderDisponibles(); renderDomingo(); }
+    function agregar(filename) {
+      if (!playlistDomingo.includes(filename)) { playlistDomingo.push(filename); renderizarListas(); }
+    }
+    function quitar(i)     { playlistDomingo.splice(i, 1); renderDomingo(); }
+    function mover(i, dir) {
+      const j = i + dir;
+      if (j < 0 || j >= playlistDomingo.length) return;
+      [playlistDomingo[i], playlistDomingo[j]] = [playlistDomingo[j], playlistDomingo[i]];
+      renderDomingo();
+    }
+
+    /* ════════════════════════════════════════════════════
+       POLLING AUTOMÁTICO — refresca la lista de pendientes
+       cada 20 segundos para reflejar descargas completadas
+       en la PC de la iglesia sin necesidad de recargar.
+       ════════════════════════════════════════════════════ */
+    let pollingInterval = null;
+
+    function iniciarPolling() {
+      if (pollingInterval) return; // ya corriendo
+      pollingInterval = setInterval(async () => {
+        try {
+          const data = await fetchBin(BIN_PENDING);
+          const nuevos = Array.isArray(data.record?.pending) ? data.record.pending : [];
+
+          // Si la cantidad cambió (se descargó algo), actualizar silenciosamente
+          if (nuevos.length !== pendingLinks.length) {
+            const eliminados = pendingLinks.length - nuevos.length;
+            pendingLinks = nuevos;
+            renderPendientes();
+
+            // También refrescar la lista de videos disponibles si bajaron
+            if (eliminados > 0) {
+              await refrescarVideosDisponibles();
+            }
+          }
+        } catch (e) {
+          // Silencioso — no molestar al usuario por errores de polling
+          console.warn('[polling]', e.message);
+        }
+      }, 20000); // cada 20 segundos
+    }
+
+    async function refrescarVideosDisponibles() {
+      try {
+        const dataVideos = await fetchBin(BIN_VIDEOS);
+        const todos = extraerVideos(dataVideos.record);
+        if (!todos) return;
+        const nuevosVideos = todos.filter(v =>
+          v && v.filename && !v.isFolder &&
+          /\.(mp4|mkv|avi|webm|mov)$/i.test(v.filename)
+        );
+        // Solo re-renderizar si hay cambios reales
+        if (nuevosVideos.length !== videosIglesia.length) {
+          videosIglesia = nuevosVideos;
+          setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length} videos`, 'ok');
+          renderDisponibles();
+        }
+      } catch (e) {
+        console.warn('[polling videos]', e.message);
+      }
+    }
+
+    /* ── Guardar playlist ── */
+    async function guardarPlaylist() {
+      const btn = document.getElementById('btn-guardar');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Guardando...';
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_PLAYLIST}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+          body: JSON.stringify({ playlist: playlistDomingo, savedAt: new Date().toISOString() })
+        });
+        if (res.ok) {
+          btn.classList.add('saved');
+          btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Guardado';
+          setTimeout(() => {
+            btn.classList.remove('saved');
+            btn.innerHTML = '<i class="bi bi-floppy me-1"></i> Guardar Playlist';
+            btn.disabled = false;
+          }, 2500);
+        } else {
+          btn.innerHTML = '<i class="bi bi-floppy me-1"></i> Guardar Playlist';
+          btn.disabled = false;
+        }
+      } catch (e) {
+        btn.innerHTML = '<i class="bi bi-floppy me-1"></i> Guardar Playlist';
+        btn.disabled = false;
+      }
+    }
+
+    window.onload = cargarDatos;
   </script>
 </body>
-
 </html>

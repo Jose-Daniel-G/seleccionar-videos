@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control Remoto - Alabanzas Iglesia</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Sección de Pendientes ── */
+    .pending-section {
+      margin-top: 1.2rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .pending-section-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-pending-count {
+      background-color: rgba(201, 168, 76, 0.15);
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(201, 168, 76, 0.3);
+    }
+
+    .pending-section-hint {
+      font-size: 0.75rem;
+      color: var(--pearl-muted);
+      margin-bottom: 0.8rem;
+      line-height: 1.3;
+    }
+
+    /* Fila de Input y Botón de Pendientes */
+    .yt-input-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .yt-input-row input {
+      flex: 1;
+      background-color: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border-item);
+      border-radius: 6px;
+      padding: 0.45rem 0.6rem;
+      color: #fff;
+      font-size: 0.82rem;
+    }
+
+    .yt-input-row input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .btn-add-pending {
+      background-color: var(--gold);
+      color: #1e1e24;
+      border: none;
+      font-weight: 700;
+      font-size: 0.82rem;
+      border-radius: 6px;
+      padding: 0 0.8rem;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-add-pending:hover {
+      background-color: #dfba53;
+    }
+
+    .btn-add-pending:disabled {
+      opacity: 0.6;
+    }
+
+    /* Vista previa de miniatura */
+    .yt-preview {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background-color: rgba(0, 0, 0, 0.15);
+      border: 1px dashed var(--gold-dim);
+      border-radius: 6px;
+      padding: 6px;
+      margin-bottom: 8px;
+    }
+
+    .yt-preview.show {
+      display: flex;
+    }
+
+    .yt-preview img {
+      width: 56px;
+      height: 42px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    #yt-preview-label {
+      font-size: 0.75rem;
+      color: var(--text-pearl);
+    }
+
+    /* Lista de canciones en espera */
+    .pending-list {
+      list-group-style: none;
+      padding: 0;
+      margin: 8px 0 0 0;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .empty-hint {
+      font-size: 0.78rem;
+      color: var(--pearl-muted);
+      font-style: italic;
+    }
+
+    /* Botón Guardar Principal */
+    .btn-save-main {
+      background-color: #4f46e5;
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(79, 46, 229, 0.2);
+    }
+
+    .btn-save-main:hover {
+      background-color: #4338ca;
+    }
+
+    .btn-save-main.saved {
+      background-color: #16a34a !important;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="custom-navbar w-100 mb-4">
+    <div class="container-fluid d-flex justify-content-between align-items-center position-relative">
+
+      <div class="logo-wrap">
+        <img src="assets/imresizer-logo.jpg" alt="Logo Remanente"
+          onerror="this.style.display='none';this.parentElement.innerHTML='<svg width=\'32\' height=\'32\' viewBox=\'0 0 44 44\' fill=\'none\' class=\'m-2\'><line x1=\'22\' y1=\'4\' x2=\'22\' y2=\'40\' stroke=\'#3A4DC4\' stroke-width=\'3\' stroke-linecap=\'round\'/><line x1=\'11\' y1=\'16\' x2=\'33\' y2=\'16\' stroke=\'#3A4DC4\' stroke-width=\'3\' stroke-linecap=\'round\'/></svg>'">
+      </div>
+
+      <div class="text-center mx-auto">
+        <h2 class="h5 text-uppercase fw-bold m-0" style="color: #a5b4fc; letter-spacing: 0.05em;">
+          Planificador Domingo 🎶
+        </h2>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <span id="estado-conexion" class="badge bg-info bg-opacity-15 text-info rounded-pill px-3 py-2">
+          ⏳ Conectando...
+        </span>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ── CONTENIDO PRINCIPAL ── -->
+  <div class="container-fluid px-3 px-md-5">
+
+    <div class="row g-4 mb-4">
+      <!-- Panel de Videos Disponibles -->
+      <div class="col-12 col-md-6">
+        <div class="card panel-card p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+            <h3 class="h5 m-0 text-white">Videos en PC Iglesia</h3>
+            <span class="badge bg-secondary rounded-pill" id="badge-disponibles">0</span>
+          </div>
+
+          <div class="search-container position-relative mb-3">
+            <span class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+            <input type="text" class="form-control" id="buscar" placeholder="Buscar video..."
+              oninput="filtrar(this.value)">
+          </div>
+
+          <div class="scroll-list">
+            <ul id="lista-disponibles" class="list-group p-0">
+              <li class="list-group-item text-center text-muted">Esperando conexión...</li>
+            </ul>
+          </div>
+          <div class="pending-section">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <span class="pending-section-title">
+                <i class="bi bi-cloud-download me-1"></i>Videos para descargar
+              </span>
+              <span class="badge-pending-count" id="badge-pendientes">0</span>
+            </div>
+            <p class="pending-section-hint">
+              ¿No está el video? Pega el link de YouTube. La PC de la iglesia lo descarga al abrir Remanente Desktop.
+            </p>
+
+            <div class="yt-preview" id="yt-preview">
+              <img id="yt-preview-img" src="" alt="Thumbnail">
+              <span id="yt-preview-label">Video detectado — listo para agregar</span>
+            </div>
+
+            <div class="pending-status small mb-2 d-none" id="pending-status"></div>
+
+            <div class="yt-input-row">
+              <input type="url" id="input-yt-url" placeholder="https://youtube.com/watch?v=..."
+                oninput="onYtInput(this.value)">
+              <button class="btn-add-pending" id="btn-agregar" onclick="agregarPendiente()">
+                <i class="bi bi-plus-lg"></i> Agregar
+              </button>
+            </div>
+
+            <ul class="pending-list" id="lista-pendientes">
+              <li style="justify-content:center; border:none; background:none;">
+                <span class="empty-hint">Cargando cola de descargas...</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel de Playlist del Domingo -->
+      <div class="col-12 col-md-6">
+        <div class="card panel-card p-3 d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+            <h3 class="h5 m-0 text-white">Playlist del Domingo</h3>
+            <span class="badge bg-primary rounded-pill" id="badge-domingo">0</span>
+          </div>
+
+          <div class="scroll-list flex-grow-1">
+            <ul id="lista-domingo" class="list-group p-0"></ul>
+          </div>
+
+          <button class="btn btn-primary w-100 py-2 mt-3 fw-bold shadow-sm" id="btn-guardar"
+            onclick="guardarPlaylist()">
+            💾 Guardar Playlist
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FOOTER EXTENDIDO ── -->
+
+
+  </div>
+<footer class="custom-footer p-3 d-flex flex-column flex-md-row align-items-center gap-3 justify-content-between" style="display: flex !important; width: 100%;">
+    <div class="header-text" style="flex: 1;">
+      <div class="d-flex flex-column flex-md-row align-items-center align-items-md-baseline gap-2 gap-md-3 text-center text-md-start">
+        <h1>Remanente del Dios Vivo y Eterno</h1>
+        <p>Ministerio Multimedia · Alabanza · Predicación</p>
+      </div>
+      <div class="gold-rule"></div>
+    </div>
+    
+    <!-- ── BLOQUE DE COPYRIGHT FORZADO ── -->
+    <div class="text-center text-md-end text-white-50" style="font-size: 0.78rem; opacity: 0.8; white-space: nowrap; padding-top: 5px;">
+      <span>© 2026 JDG Twins</span>
+    </div>
+  </footer>
+  <!-- <div class="badge bg-dark bg-opacity-50 border border-secondary p-2 d-flex align-items-center gap-2 rounded-pill">
+        <span class="pulse-dot"></span>
+        <span style="font-size: 0.75rem;">Panel Activo</span>
+      </div> -->
+  </footer>
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ── CONTROLADOR JAVASCRIPT ── -->
+  <script src="js/script.js"></script>
+  <script>
+    /* ── LÓGICA DE VIDEO EN ESPERA / COLA PENDIENTES ── */
+    async function cargarDescargasPendientes() {
+      const lista = document.getElementById('lista-pendientes');
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_PENDING}/latest`, {
+          headers: { 'X-Master-Key': API_KEY }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          descargasPendientes = Array.isArray(data.record?.pending) ? data.record.pending : [];
+          renderizarColaEspera();
+        }
+      } catch (e) {
+        console.error("Error leyendo cola pendientes", e);
+        lista.innerHTML = `<li><span class="empty-hint text-danger">⚠️ Error de sincronización</span></li>`;
+      }
+    }
+
+    function renderizarColaEspera() {
+      const lista = document.getElementById('lista-pendientes');
+      const badge = document.getElementById('badge-pendientes');
+
+      badge.textContent = descargasPendientes.length;
+
+      if (descargasPendientes.length === 0) {
+        lista.innerHTML = `
+          <li style="justify-content:center; border:none; background:none;">
+            <span class="empty-hint">No hay videos en espera</span>
+          </li>`;
+        return;
+      }
+
+      lista.innerHTML = descargasPendientes.map(item => `
+        <li class="d-flex justify-content-between align-items-center" style="gap: 8px;">
+          <div class="d-flex flex-column" style="max-width: 70%;">
+            <span class="text-truncate d-block fw-bold" style="color: var(--gold); font-size: 0.82rem;">
+              ${item.title || 'Video de YouTube'}
+            </span>
+            <span class="text-muted text-truncate d-block" style="font-size: 0.7rem; margin-top:1px;">
+              ${item.url}
+            </span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill" style="font-size:0.65rem; padding: 4px 8px;">
+              🕒 En espera
+            </span>
+            <button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.75rem; border-radius: 4px;" 
+                    onclick="cancelarPendiente('${item.id}')" title="Cancelar descarga">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    async function cancelarPendiente(id) {
+      if (!confirm('¿Estás seguro de que deseas cancelar y eliminar este video de la lista de descargas?')) return;
+
+      const status = document.getElementById('pending-status');
+
+      // Filtrar para remover el elemento seleccionado
+      const itemAEliminar = descargasPendientes.find(item => item.id === id);
+      descargasPendientes = descargasPendientes.filter(item => item.id !== id);
+
+      try {
+        status.className = "pending-status text-warning d-block small mb-2";
+        status.textContent = "⏳ Cancelando en la nube...";
+        status.classList.remove('d-none');
+
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_PENDING}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+          body: JSON.stringify({ pending: descargasPendientes, playlist: playlistDomingo })
+        });
+
+        if (res.ok) {
+          status.className = "pending-status text-success d-block small mb-2";
+          status.textContent = "✅ Descarga cancelada correctamente.";
+          renderizarColaEspera();
+          setTimeout(() => status.classList.add('d-none'), 3000);
+        } else {
+          throw new Error("No se pudo actualizar el servidor");
+        }
+      } catch (e) {
+        status.className = "pending-status text-danger d-block small mb-2";
+        status.textContent = "❌ Error al cancelar en la nube. Revirtiendo...";
+        // Si falla, revertimos el elemento al array local
+        if (itemAEliminar) descargasPendientes.push(itemAEliminar);
+        renderizarColaEspera();
+      }
+    }
+
+    function onYtInput(url) {
+      const preview = document.getElementById('yt-preview');
+      const img = document.getElementById('yt-preview-img');
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+
+      if (match && match[2].length === 11) {
+        const videoId = match[2];
+        img.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+        preview.classList.add('show');
+      } else {
+        img.src = '';
+        preview.classList.remove('show');
+      }
+    }
+
+    async function agregarPendiente() {
+      const input = document.getElementById('input-yt-url');
+      const btn = document.getElementById('btn-agregar');
+      const status = document.getElementById('pending-status');
+      const url = input.value.trim();
+
+      if (!url.includes('youtube.com') && !url.includes('youtu.be')) {
+        status.className = "pending-status text-danger d-block small mb-2";
+        status.textContent = "❌ Link de YouTube inválido.";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '⏳';
+
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      const videoId = match ? match[2] : 'Nuevo Link';
+
+      let finalTitle = `Video Pendiente (${videoId})`;
+
+      // 🌟 AUTOMÁTICO: Consultar el título real a YouTube sin pedirlo por prompt
+      try {
+        const responseYt = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
+        if (responseYt.ok) {
+          const ytData = await responseYt.json();
+          if (ytData && ytData.title) {
+            finalTitle = ytData.title; // Extrae el nombre exacto de YouTube
+          }
+        }
+      } catch (errorInfo) {
+        console.error("No se pudo obtener el título de YouTube automáticamente", errorInfo);
+      }
+
+      descargasPendientes.push({
+        id: Date.now().toString(),
+        url: url,
+        title: finalTitle,
+        status: 'pending'
+      });
+
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_PENDING}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+          body: JSON.stringify({ pending: descargasPendientes, playlist: playlistDomingo })
+        });
+
+        if (res.ok) {
+          input.value = '';
+          if (document.getElementById('yt-preview')) document.getElementById('yt-preview').classList.remove('show');
+          status.className = "pending-status text-success d-block small mb-2";
+          status.textContent = "✅ ¡Añadido a la cola de descargas!";
+          renderizarColaEspera();
+          setTimeout(() => status.classList.add('d-none'), 3500);
+        }
+      } catch (e) {
+        status.className = "pending-status text-danger d-block small mb-2";
+        status.textContent = "❌ Error en el servidor.";
+        descargasPendientes.pop();
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Agregar';
+      }
+    }
+
+  </script>
+</body>
+
+</html>
