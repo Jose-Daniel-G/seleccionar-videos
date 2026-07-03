@@ -488,3 +488,26 @@
       70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(201, 168, 76, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); }
     }
+          /* --- MÓVILES (Tamaño por defecto en pantallas pequeñas) --- */
+      .navbar-logo-container {
+        width: 36px !important;    /* Forzamos que se encoja el fondo circular */
+        height: 36px !important;
+        box-shadow: 0 0 6px rgba(201, 168, 76, 0.2);
+      }
+      .navbar-title {
+        color: #a5b4fc; 
+        letter-spacing: 0.01em;
+        font-size: 0.85rem;         /* Letra pequeña para que quepa en cualquier celular */
+      }
+
+      /* --- TABLETS Y PC (Pantallas de 768px o más ancho) --- */
+      @media (min-width: 768px) {
+        .navbar-logo-container {
+          width: 54px !important;  /* Recupera el tamaño original de tu CSS */
+          height: 54px !important;
+        }
+        .navbar-title {
+          font-size: 1.25rem;       /* Se ve grande e imponente en PC */
+          letter-spacing: 0.05em;
+        }
+      }
