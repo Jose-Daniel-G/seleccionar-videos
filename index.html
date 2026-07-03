@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Planificador Domingo · Remanente</title>
 
-  <!-- Bootstrap 5 + Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Lato:wght@300;400;700&display=swap"
@@ -17,56 +16,53 @@
 
 <body>
 
-  <!-- Navbar -->
   <nav class="navbar p-0">
-    <div class="container-fluid d-flex align-items-center gap-2">
+    <div class="container-fluid d-flex justify-content-between align-items-center position-relative">
       <div class="logo-wrap">
         <img src="assets/imresizer-logo.jpg" alt="Logo" onerror="this.style.display='none'">
       </div>
-      <span class="navbar-brand mb-0"> Planificador Domingo 🎶</span>
-      <div class="d-flex align-items-center gap-2">
-        <span id="estado-conexion" class="badge rounded-pill bg-info bg-opacity-25 text-info px-3 py-2">
-          ⏳ Conectando...
+      <div class="text-center mx-auto">
+        <span class="navbar-brand mb-0 h5 text-uppercase fw-bold" style="color: #a5b4fc; letter-spacing: 0.05em;">
+          Planificador Domingo 🎶
         </span>
+      </div>
+      <div class="d-flex align-items-center gap-2">
         <button class="btn-retry" onclick="cargarDatos()" title="Reintentar">
           <i class="bi bi-arrow-clockwise"></i>
         </button>
       </div>
+    </div>
   </nav>
 
   <div class="gold-rule"></div>
 
-  <!-- Contenido principal -->
   <div class="container-fluid px-3 py-3" style="max-width:1200px; margin:0 auto;">
     <div class="row g-3">
 
-      <!-- ══ Panel izquierdo: Videos disponibles ══ -->
       <div class="col-12 col-md-6">
         <div class="panel-card p-3 h-100">
 
-          <!-- Título -->
           <div class="d-flex align-items-center justify-content-between mb-2">
             <span class="panel-title">
               <i class="bi bi-collection-play me-1" style="color:var(--gold)"></i>
               Videos en PC Iglesia
             </span>
-            <span class="badge-count" id="badge-disponibles">0</span>
+            <span id="estado-conexion" class="badge rounded-pill bg-info bg-opacity-25 text-info px-3 py-2">
+              ⏳ Conectando...
+            </span>
           </div>
 
-          <!-- Búsqueda -->
           <div class="search-wrap mb-2">
             <i class="bi bi-search"></i>
             <input type="text" id="buscar" placeholder="Buscar video..." oninput="filtrar(this.value)">
           </div>
 
-          <!-- Lista de videos -->
           <ul class="list-group scroll-list" id="lista-disponibles">
             <li class="list-group-item text-center text-info" style="font-size:0.8rem">
               Conectando con JSONBin...
             </li>
           </ul>
 
-          <!-- ══ Sección pendientes ══ -->
           <div class="pending-section">
             <div class="d-flex align-items-center gap-2 mb-1">
               <span class="pending-section-title">
@@ -78,16 +74,13 @@
               ¿No está el video? Pega el link de YouTube. La PC de la iglesia lo descarga al abrir Remanente Desktop.
             </p>
 
-            <!-- Preview miniatura -->
             <div class="yt-preview" id="yt-preview">
               <img id="yt-preview-img" src="" alt="">
               <span id="yt-preview-label">Video detectado — listo para agregar</span>
             </div>
 
-            <!-- Status -->
             <div class="pending-status" id="pending-status"></div>
 
-            <!-- Input + botón -->
             <div class="yt-input-row">
               <input type="url" id="input-yt-url" placeholder="https://youtube.com/watch?v=..."
                 oninput="onYtInput(this.value)">
@@ -96,7 +89,6 @@
               </button>
             </div>
 
-            <!-- Lista pendientes -->
             <ul class="pending-list" id="lista-pendientes">
               <li style="justify-content:center; border:none; background:none;">
                 <span class="empty-hint">Cargando...</span>
@@ -107,7 +99,6 @@
         </div>
       </div>
 
-      <!-- ══ Panel derecho: Playlist del domingo ══ -->
       <div class="col-12 col-md-6">
         <div class="panel-card p-3 h-100 d-flex flex-column">
 
@@ -134,34 +125,37 @@
 
     </div>
   </div>
-  <footer class="custom-footer p-3 d-flex flex-column flex-md-row align-items-center gap-3 justify-content-between" style="display: flex !important; width: 100%;">
-      <div class="header-text" style="flex: 1;">
-        <div class="d-flex flex-column flex-md-row align-items-center align-items-md-baseline gap-2 gap-md-3 text-center text-md-start">
-          <h1>Remanente del Dios Vivo y Eterno</h1>
-          <p>Ministerio Multimedia · Alabanza · Predicación</p>
-        </div>
-        <div class="gold-rule"></div>
+
+  <footer class="custom-footer p-3 d-flex flex-column flex-md-row align-items-center gap-3 justify-content-between"
+    style="display: flex !important; width: 100%;">
+    <div class="header-text" style="flex: 1;">
+      <div class="d-flex flex-column flex-md-row align-items-center align-items-md-baseline gap-2 gap-md-3 text-center text-md-start">
+        <h1>Remanente del Dios Vivo y Eterno</h1>
+        <p>Ministerio Multimedia · Alabanza · Predicación</p>
       </div>
-      
-      <!-- ── BLOQUE DE COPYRIGHT FORZADO ── -->
-      <div class="text-center text-md-end text-white-50" style="font-size: 0.78rem; opacity: 0.8; white-space: nowrap; padding-top: 5px;">
-        <span>© 2026 JDG Twins</span>
-      </div>
-    </footer>
+      <div class="gold-rule"></div>
+    </div>
+    <div class="text-center text-md-end text-white-50" style="font-size: 0.78rem; opacity: 0.8; white-space: nowrap; padding-top: 5px;">
+      <span>© 2026 JDG Twins</span>
+    </div>
+  </footer>
+
   <script>
     const API_KEY = '$2a$10$FC02j5gbHIHKA.wnoYQNqegrrC4EBf/gCyx1lR/oBRGi99Bj7aemC';
     const BIN_VIDEOS = '6a4171f1da38895dfe0cb6b8';
     const BIN_PLAYLIST = '6a41792df5f4af5e293e5e04';
-    const BIN_PENDING = '6a4585f0f5f4af5e2950260e';   // ← reemplaza con el ID real
+    const BIN_PENDING = '6a4585f0f5f4af5e2950260e';
 
     let videosIglesia = [];
     let playlistDomingo = [];
     let pendingLinks = [];
     let filtroActual = '';
 
-    /* ── Estado conexión ── */
+    /* ── Estado conexión seguro ── */
     function setEstado(msg, tipo) {
       const el = document.getElementById('estado-conexion');
+      if (!el) return; 
+      
       el.innerHTML = msg;
       el.className = 'badge rounded-pill px-3 py-2 ';
       if (tipo === 'ok') el.classList.add('bg-success', 'bg-opacity-25', 'text-success');
@@ -208,9 +202,11 @@
 
     /* ── Carga principal ── */
     async function cargarDatos() {
-      setEstado('⏳ Leyendo videos...', 'carga');
+      setEstado('⏳ Leyendo...', 'carga');
       const panelDisp = document.getElementById('lista-disponibles');
-      panelDisp.innerHTML = '<li class="list-group-item text-center text-info" style="font-size:.8rem">Conectando...</li>';
+      if (panelDisp) {
+        panelDisp.innerHTML = '<li class="list-group-item text-center text-info" style="font-size:.8rem">Conectando...</li>';
+      }
 
       try {
         const dataVideos = await fetchBin(BIN_VIDEOS);
@@ -218,7 +214,9 @@
 
         if (!todos) {
           setEstado('⚠️ Estructura inesperada', 'error');
-          panelDisp.innerHTML = '<li class="list-group-item text-warning text-center" style="font-size:.8rem">Abre Remanente Desktop en la PC de la iglesia para sincronizar.</li>';
+          if (panelDisp) {
+            panelDisp.innerHTML = '<li class="list-group-item text-warning text-center" style="font-size:.8rem">Abre Remanente Desktop en la PC de la iglesia para sincronizar.</li>';
+          }
           return;
         }
 
@@ -230,29 +228,31 @@
         try {
           const dataPlay = await fetchBin(BIN_PLAYLIST);
           const raw = dataPlay.record;
-          const arr = Array.isArray(raw?.playlist) ? raw.playlist
-            : Array.isArray(raw) ? raw : [];
+          const arr = Array.isArray(raw?.playlist) ? raw.playlist : Array.isArray(raw) ? raw : [];
           playlistDomingo = arr.filter(x => x && x !== 'inicio');
         } catch { playlistDomingo = []; }
 
-        /* Pendientes */
         await cargarPendientes();
 
         if (!videosIglesia.length) {
           setEstado('⚠️ Carpeta vacía', 'error');
-          panelDisp.innerHTML = '<li class="list-group-item text-warning text-center" style="font-size:.8rem">La carpeta de alabanzas está vacía. Abre Remanente Desktop.</li>';
+          if (panelDisp) {
+            panelDisp.innerHTML = '<li class="list-group-item text-warning text-center" style="font-size:.8rem">La carpeta de alabanzas está vacía. Abre Remanente Desktop.</li>';
+          }
           return;
         }
 
-        setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length} videos`, 'ok');
+        setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length}`, 'ok');
         renderizarListas();
-        iniciarPolling(); // arrancar polling automático
+        iniciarPolling(); 
 
       } catch (e) {
         setEstado('❌ Error de red', 'error');
-        panelDisp.innerHTML = `<li class="list-group-item text-danger text-center" style="font-size:.8rem">
-          No se pudo conectar. Verifica internet y presiona <strong>reintentar</strong>.<br>
-          <small class="text-muted">${e.message}</small></li>`;
+        if (panelDisp) {
+          panelDisp.innerHTML = `<li class="list-group-item text-danger text-center" style="font-size:.8rem">
+            No se pudo conectar. Verifica internet y presiona <strong>reintentar</strong>.<br>
+            <small class="text-muted">${e.message}</small></li>`;
+        }
       }
     }
 
@@ -261,20 +261,20 @@
       try {
         const data = await fetchBin(BIN_PENDING);
         pendingLinks = Array.isArray(data.record?.pending) ? data.record.pending : [];
-      } catch {
-        pendingLinks = [];
-      }
+      } catch { pendingLinks = []; }
       renderPendientes();
     }
 
     /* ── Pendientes: render ── */
     function renderPendientes() {
       const lista = document.getElementById('lista-pendientes');
-      document.getElementById('badge-pendientes').textContent = pendingLinks.length;
+      if (!lista) return;
+
+      const badgePend = document.getElementById('badge-pendientes');
+      if (badgePend) badgePend.textContent = pendingLinks.length;
 
       if (!pendingLinks.length) {
-        lista.innerHTML = `<li style="justify-content:center;border:none;background:none;">
-          <span class="empty-hint">Sin descargas pendientes 🎉</span></li>`;
+        lista.innerHTML = `<li style="justify-content:center;border:none;background:none;"><span class="empty-hint">Sin descargas pendientes 🎉</span></li>`;
         return;
       }
 
@@ -297,10 +297,11 @@
       });
     }
 
-    /* ── Pendientes: preview YouTube ── */
     function onYtInput(val) {
       const box = document.getElementById('yt-preview');
       const img = document.getElementById('yt-preview-img');
+      if (!box || !img) return;
+
       const match = val.match(/(?:youtu\.be\/|[?&]v=)([^#&?]{11})/);
       if (match) {
         img.src = `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
@@ -310,14 +311,14 @@
       }
     }
 
-    /* ── Pendientes: agregar ── */
     async function agregarPendiente() {
       const input = document.getElementById('input-yt-url');
       const btn = document.getElementById('btn-agregar');
+      if (!input || !btn) return;
+      
       const url = input.value.trim();
 
       if (!url) { showPendingStatus('Pega un enlace de YouTube válido.', 'error'); return; }
-
       const match = url.match(/(?:youtu\.be\/|[?&]v=)([^#&?]{11})/);
       if (!match) { showPendingStatus('No se reconoce como un enlace de YouTube.', 'error'); return; }
 
@@ -342,52 +343,51 @@
       try {
         await putBin(BIN_PENDING, { pending: pendingLinks, updatedAt: new Date().toISOString() });
         input.value = '';
-        document.getElementById('yt-preview').style.display = 'none';
+        const previewBox = document.getElementById('yt-preview');
+        if (previewBox) previewBox.style.display = 'none';
         renderPendientes();
         showPendingStatus('✅ Guardado. Se descargará al abrir Remanente Desktop.', 'ok');
       } catch (e) {
         pendingLinks.pop();
         renderPendientes();
         showPendingStatus('❌ Error al guardar: ' + e.message, 'error');
-      } finally {
-        btn.disabled = false;
+      } finally { 
+        btn.disabled = false; 
       }
     }
 
-    /* ── Pendientes: quitar ── */
     async function quitarPendiente(i) {
       pendingLinks.splice(i, 1);
       renderPendientes();
       try {
         await putBin(BIN_PENDING, { pending: pendingLinks, updatedAt: new Date().toISOString() });
-      } catch (e) {
-        showPendingStatus('No se pudo sincronizar: ' + e.message, 'error');
-      }
+      } catch (e) { showPendingStatus('No se pudo sincronizar: ' + e.message, 'error'); }
     }
 
     function showPendingStatus(msg, tipo) {
       const el = document.getElementById('pending-status');
+      if (!el) return;
       el.textContent = msg;
       el.className = 'pending-status ' + tipo;
       el.style.display = 'block';
       if (tipo === 'ok') setTimeout(() => { el.style.display = 'none'; }, 4000);
     }
 
-    /* ── Filtro ── */
     function filtrar(val) {
       filtroActual = val.toLowerCase().trim();
       renderDisponibles();
     }
 
-    /* ── Render disponibles ── */
+    /* ── Render disponibles seguro ── */
     function renderDisponibles() {
       const container = document.getElementById('lista-disponibles');
-      const enLista = new Set(playlistDomingo);
-      const lista = filtroActual
-        ? videosIglesia.filter(v => v.name.toLowerCase().includes(filtroActual))
-        : videosIglesia;
+      if (!container) return;
 
-      document.getElementById('badge-disponibles').textContent = lista.length;
+      const enLista = new Set(playlistDomingo);
+      const lista = filtroActual ? videosIglesia.filter(v => v.name.toLowerCase().includes(filtroActual)) : videosIglesia;
+
+      const badgeDisp = document.getElementById('badge-disponibles');
+      if (badgeDisp) badgeDisp.textContent = lista.length;
 
       if (!lista.length) {
         container.innerHTML = `<li class="list-group-item text-center text-muted" style="font-size:.8rem;border:none;background:none;">Sin resultados para "${filtroActual}"</li>`;
@@ -407,14 +407,16 @@
       });
     }
 
-    /* ── Render domingo ── */
+    /* ── Render domingo seguro ── */
     function renderDomingo() {
       const container = document.getElementById('lista-domingo');
-      document.getElementById('badge-domingo').textContent = playlistDomingo.length;
+      if (!container) return;
+
+      const badgeDom = document.getElementById('badge-domingo');
+      if (badgeDom) badgeDom.textContent = playlistDomingo.length;
 
       if (!playlistDomingo.length) {
-        container.innerHTML = `<li class="list-group-item text-center" style="font-size:.8rem;border:none;background:none;">
-          <div class="empty-hint">Agrega videos desde la lista izquierda.<br>Se reproducirán en este orden el domingo.</div></li>`;
+        container.innerHTML = `<li class="list-group-item text-center" style="font-size:.8rem;border:none;background:none;"><div class="empty-hint">Agrega videos desde la lista izquierda.<br>Se reproducirán en este orden el domingo.</div></li>`;
         return;
       }
 
@@ -447,36 +449,24 @@
       renderDomingo();
     }
 
-    /* ════════════════════════════════════════════════════
-       POLLING AUTOMÁTICO — refresca la lista de pendientes
-       cada 20 segundos para reflejar descargas completadas
-       en la PC de la iglesia sin necesidad de recargar.
-       ════════════════════════════════════════════════════ */
+    /* ── Polling automático ── */
     let pollingInterval = null;
 
     function iniciarPolling() {
-      if (pollingInterval) return; // ya corriendo
+      if (pollingInterval) return;
       pollingInterval = setInterval(async () => {
         try {
           const data = await fetchBin(BIN_PENDING);
           const nuevos = Array.isArray(data.record?.pending) ? data.record.pending : [];
 
-          // Si la cantidad cambió (se descargó algo), actualizar silenciosamente
           if (nuevos.length !== pendingLinks.length) {
             const eliminados = pendingLinks.length - nuevos.length;
             pendingLinks = nuevos;
             renderPendientes();
-
-            // También refrescar la lista de videos disponibles si bajaron
-            if (eliminados > 0) {
-              await refrescarVideosDisponibles();
-            }
+            if (eliminados > 0) { await refrescarVideosDisponibles(); }
           }
-        } catch (e) {
-          // Silencioso — no molestar al usuario por errores de polling
-          console.warn('[polling]', e.message);
-        }
-      }, 20000); // cada 20 segundos
+        } catch (e) { console.warn('[polling]', e.message); }
+      }, 20000);
     }
 
     async function refrescarVideosDisponibles() {
@@ -485,23 +475,21 @@
         const todos = extraerVideos(dataVideos.record);
         if (!todos) return;
         const nuevosVideos = todos.filter(v =>
-          v && v.filename && !v.isFolder &&
-          /\.(mp4|mkv|avi|webm|mov)$/i.test(v.filename)
+          v && v.filename && !v.isFolder && /\.(mp4|mkv|avi|webm|mov)$/i.test(v.filename)
         );
-        // Solo re-renderizar si hay cambios reales
         if (nuevosVideos.length !== videosIglesia.length) {
           videosIglesia = nuevosVideos;
           setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length} videos`, 'ok');
           renderDisponibles();
         }
-      } catch (e) {
-        console.warn('[polling videos]', e.message);
-      }
+      } catch (e) { console.warn('[polling videos]', e.message); }
     }
 
     /* ── Guardar playlist ── */
     async function guardarPlaylist() {
       const btn = document.getElementById('btn-guardar');
+      if (!btn) return;
+
       btn.disabled = true;
       btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Guardando...';
       try {
