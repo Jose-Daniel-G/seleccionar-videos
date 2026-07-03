@@ -1,24 +1,38 @@
-    /* ── Variables de estilo personalizadas ── */
     :root {
       --gold: #c9a84c;
-      --gold-dim: rgba(201, 168, 76, 0.5);
+      --gold-dim: rgba(201, 168, 76, 0.45);
       --blue-light: #3a4dc4;
       --pearl-muted: #a3a3a3;
       --bg-dark: #1e1e24;
       --bg-panel: #2a2a35;
+      --bg-item: #3f3f56;
+      --bg-item-hover: #4f46e5;
+      --border-item: #4e4e66;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
       background-color: var(--bg-dark);
       color: #fff;
-      font-family: "Segoe UI", Arial, sans-serif;
+      font-family: "Lato", "Segoe UI", Arial, sans-serif;
+      min-height: 100vh;
     }
 
-    /* ── Header Estilo Navbar ── */
-    .custom-navbar {
+    /* ── Navbar ── */
+    .navbar {
       background-color: var(--bg-panel);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+      padding: 10px 20px;
+    }
+
+    .navbar-brand {
+      font-family: 'Cinzel', serif;
+      color: var(--gold) !important;
+      letter-spacing: 0.04em;
     }
 
     .logo-wrap {
@@ -27,7 +41,8 @@
       border-radius: 50%;
       overflow: hidden;
       border: 2px solid var(--gold-dim);
-      box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
+      box-shadow: 0 0 10px rgba(201, 168, 76, 0.2);
+      flex-shrink: 0;
     }
 
     .logo-wrap img {
@@ -36,7 +51,405 @@
       object-fit: cover;
     }
 
-    /* ── Footer Estilizado ── */
+    /* ── Estado conexión ── */
+    #estado-conexion {
+      font-size: 0.82rem;
+    }
+
+    /* ── Panel cards ── */
+    .panel-card {
+      background-color: var(--bg-panel);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .panel-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: #e2e2f0;
+    }
+
+    /* ── Lista ── */
+    .scroll-list {
+      height: 42vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--bg-item) transparent;
+    }
+
+    @media (max-width: 767px) {
+      .scroll-list {
+        height: 32vh;
+      }
+    }
+
+    .list-group-item {
+      background-color: var(--bg-item) !important;
+      color: #fff !important;
+      border: 1px solid var(--border-item) !important;
+      margin-bottom: 5px;
+      border-radius: 7px !important;
+      transition: background-color 0.15s;
+      font-size: 0.83rem;
+    }
+
+    .list-group-item:hover {
+      background-color: #4a4a6a !important;
+    }
+
+    .ya-en-lista {
+      opacity: 0.38;
+    }
+
+    /* ── Search ── */
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-wrap .bi {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--pearl-muted);
+      font-size: 0.85rem;
+    }
+
+    .search-wrap input {
+      background-color: var(--bg-item);
+      border: 1px solid var(--border-item);
+      color: #fff;
+      border-radius: 7px;
+      padding: 7px 10px 7px 32px;
+      font-size: 0.82rem;
+      width: 100%;
+    }
+
+    .search-wrap input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .search-wrap input:focus {
+      outline: none;
+      border-color: var(--blue-light);
+      box-shadow: 0 0 0 3px rgba(58, 77, 196, 0.25);
+    }
+
+    /* ── Badge ── */
+    .badge-count {
+      background: rgba(201, 168, 76, 0.2);
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      border-radius: 20px;
+      padding: 2px 9px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .badge-pending-count {
+      background: rgba(58, 77, 196, 0.25);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      border-radius: 20px;
+      padding: 2px 9px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    /* ── Botones ── */
+    .btn-add-video {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #4ade80;
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: background .15s;
+      flex-shrink: 0;
+    }
+
+    .btn-add-video:hover {
+      background: rgba(34, 197, 94, 0.28);
+    }
+
+    .btn-add-video:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+
+    .btn-order {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #ccc;
+      border-radius: 5px;
+      padding: 1px 7px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .btn-order:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-remove-item {
+      background: rgba(248, 113, 113, 0.12);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      color: #f87171;
+      border-radius: 5px;
+      padding: 1px 8px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .btn-remove-item:hover {
+      background: rgba(248, 113, 113, 0.25);
+    }
+
+    .btn-save {
+      background: var(--blue-light);
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      width: 100%;
+      cursor: pointer;
+      transition: background .2s;
+      margin-top: 10px;
+    }
+
+    .btn-save:hover {
+      background: #4a5ed4;
+    }
+
+    .btn-save:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-save.saved {
+      background: #16a34a;
+    }
+
+    /* ── Panel pendientes ── */
+    .pending-section {
+      background: rgba(58, 77, 196, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .pending-section-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #818cf8;
+      margin-bottom: 4px;
+    }
+
+    .pending-section-hint {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.38);
+      margin-bottom: 10px;
+    }
+
+    .yt-input-row {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+
+    .yt-input-row input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 7px;
+      color: #fff;
+      padding: 7px 10px;
+      font-size: 0.8rem;
+      min-width: 0;
+    }
+
+    .yt-input-row input::placeholder {
+      color: rgba(255, 255, 255, 0.28);
+    }
+
+    .yt-input-row input:focus {
+      outline: none;
+      border-color: #818cf8;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .btn-add-pending {
+      background: rgba(99, 102, 241, 0.25);
+      border: 1px solid rgba(99, 102, 241, 0.45);
+      color: #a5b4fc;
+      border-radius: 7px;
+      padding: 7px 13px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+      flex-shrink: 0;
+    }
+
+    .btn-add-pending:hover {
+      background: rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-add-pending:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Preview miniatura YT */
+    .yt-preview {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 7px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+    }
+
+    .yt-preview img {
+      width: 72px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .yt-preview span {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    /* Lista pendientes */
+    .pending-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .pending-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 7px;
+      padding: 7px 10px;
+      font-size: 0.78rem;
+    }
+
+    .pending-list li img {
+      width: 48px;
+      height: 32px;
+      object-fit: cover;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .pending-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .pending-item-title {
+      color: rgba(255, 255, 255, 0.8);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+    }
+
+    .pending-item-url {
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.3);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+    }
+
+    .btn-del-pending {
+      background: none;
+      border: none;
+      color: #f87171;
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 2px 5px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      transition: background .12s;
+    }
+
+    .btn-del-pending:hover {
+      background: rgba(248, 113, 113, 0.15);
+    }
+
+    /* Status pendientes */
+    .pending-status {
+      font-size: 0.75rem;
+      border-radius: 6px;
+      padding: 5px 10px;
+      margin-bottom: 8px;
+      display: none;
+    }
+
+    .pending-status.ok {
+      background: rgba(22, 163, 74, 0.15);
+      color: #4ade80;
+    }
+
+    .pending-status.error {
+      background: rgba(220, 38, 38, 0.15);
+      color: #f87171;
+    }
+
+    /* Empty states */
+    .empty-hint {
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.28);
+      padding: 10px 0;
+    }
+
+    /* ── Botón reintentar ── */
+    .btn-retry {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.6);
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+
+    .btn-retry:hover {
+      border-color: var(--gold-dim);
+      color: var(--gold);
+    }
+
+    /* ── Gold rule footer ── */
+    .gold-rule {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+      margin: 0;
+    }
+        /* ── Footer Estilizado ── */
     .custom-footer {
       background-color: var(--bg-panel);
       box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
@@ -60,15 +473,6 @@
       margin: 0;
     }
 
-    .gold-rule {
-      width: 100%;
-      max-width: 250px;
-      height: 1.5px;
-      background: linear-gradient(to right, var(--gold), transparent);
-      margin-top: 0.4rem;
-      opacity: 0.7;
-    }
-
     /* Indicador de estado animado */
     .pulse-dot {
       width: 8px;
@@ -83,62 +487,4 @@
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.7); }
       70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(201, 168, 76, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); }
-    }
-
-    /* ── Contenedores de Listas Estilo App ── */
-    .panel-card {
-      background-color: var(--bg-panel) !important;
-      border: none !important;
-      border-radius: 12px !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
-    .scroll-list {
-      height: 50vh;
-      overflow-y: auto;
-    }
-
-    .list-group-item {
-      background-color: #3f3f56 !important;
-      color: #fff !important;
-      border: 1px solid #4e4e66 !important;
-      margin-bottom: 6px;
-      border-radius: 6px !important;
-      transition: background-color 0.2s;
-    }
-
-    .list-group-item:hover {
-      background-color: #4f46e5 !important;
-    }
-
-    .ya-en-lista {
-      opacity: 0.4;
-    }
-
-    .search-container .form-control {
-      background-color: #3f3f56;
-      border: 1px solid #555570;
-      color: #fff;
-      padding-left: 2.5rem;
-    }
-
-    .search-container .form-control:focus {
-      background-color: #3f3f56;
-      color: #fff;
-      border-color: #6366f1;
-      box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
-    }
-
-    @media (max-width: 767.98px) {
-      /* Forzar un tamaño de contenedor ideal para celulares */
-      .scroll-list {
-          /* En celular: se adapta al contenido (elástico), pero se clava a los ~5 elementos */
-          height: auto;
-          max-height: 220px; 
-          overflow-y: auto;
-        }
-      .gold-rule {
-        margin: 0.4rem auto 0 !important;
-        background: linear-gradient(to right, transparent, var(--gold), transparent);
-      }
     }
