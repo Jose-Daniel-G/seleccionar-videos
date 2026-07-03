@@ -26,11 +26,6 @@
           Planificador Domingo 🎶
         </span>
       </div>
-      <div class="d-flex align-items-center gap-2">
-        <button class="btn-retry" onclick="cargarDatos()" title="Reintentar">
-          <i class="bi bi-arrow-clockwise"></i>
-        </button>
-      </div>
     </div>
   </nav>
 
@@ -47,11 +42,15 @@
               <i class="bi bi-collection-play me-1" style="color:var(--gold)"></i>
               Videos en PC Iglesia
             </span>
-            <span id="estado-conexion" class="badge rounded-pill bg-info bg-opacity-25 text-info px-3 py-2">
-              ⏳ Conectando...
-            </span>
+            <div class="align-items-center d-flex justify-content-end mb-2 gap-2"> 
+              <span id="estado-conexion" class="badge rounded-pill bg-info bg-opacity-25 text-info py-2">
+                ⏳ Conectando...
+              </span>
+              <button class="btn-retry" onclick="cargarDatos()" title="Reintentar">
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
           </div>
-
           <div class="search-wrap mb-2">
             <i class="bi bi-search"></i>
             <input type="text" id="buscar" placeholder="Buscar video..." oninput="filtrar(this.value)">
@@ -129,13 +128,15 @@
   <footer class="custom-footer p-3 d-flex flex-column flex-md-row align-items-center gap-3 justify-content-between"
     style="display: flex !important; width: 100%;">
     <div class="header-text" style="flex: 1;">
-      <div class="d-flex flex-column flex-md-row align-items-center align-items-md-baseline gap-2 gap-md-3 text-center text-md-start">
+      <div
+        class="d-flex flex-column flex-md-row align-items-center align-items-md-baseline gap-2 gap-md-3 text-center text-md-start">
         <h1>Remanente del Dios Vivo y Eterno</h1>
         <p>Ministerio Multimedia · Alabanza · Predicación</p>
       </div>
       <div class="gold-rule"></div>
     </div>
-    <div class="text-center text-md-end text-white-50" style="font-size: 0.78rem; opacity: 0.8; white-space: nowrap; padding-top: 5px;">
+    <div class="text-center text-md-end text-white-50"
+      style="font-size: 0.78rem; opacity: 0.8; white-space: nowrap; padding-top: 5px;">
       <span>© 2026 JDG Twins</span>
     </div>
   </footer>
@@ -154,8 +155,8 @@
     /* ── Estado conexión seguro ── */
     function setEstado(msg, tipo) {
       const el = document.getElementById('estado-conexion');
-      if (!el) return; 
-      
+      if (!el) return;
+
       el.innerHTML = msg;
       el.className = 'badge rounded-pill px-3 py-2 ';
       if (tipo === 'ok') el.classList.add('bg-success', 'bg-opacity-25', 'text-success');
@@ -244,7 +245,7 @@
 
         setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length}`, 'ok');
         renderizarListas();
-        iniciarPolling(); 
+        iniciarPolling();
 
       } catch (e) {
         setEstado('❌ Error de red', 'error');
@@ -315,7 +316,7 @@
       const input = document.getElementById('input-yt-url');
       const btn = document.getElementById('btn-agregar');
       if (!input || !btn) return;
-      
+
       const url = input.value.trim();
 
       if (!url) { showPendingStatus('Pega un enlace de YouTube válido.', 'error'); return; }
@@ -351,8 +352,8 @@
         pendingLinks.pop();
         renderPendientes();
         showPendingStatus('❌ Error al guardar: ' + e.message, 'error');
-      } finally { 
-        btn.disabled = false; 
+      } finally {
+        btn.disabled = false;
       }
     }
 
