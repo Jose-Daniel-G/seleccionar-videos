@@ -460,18 +460,19 @@
     function iniciarPolling() {
       if (pollingInterval) return;
       pollingInterval = setInterval(async () => {
+        // 1. Refrescar lista de videos disponibles (BIN_VIDEOS)
+        await refrescarVideosDisponibles();
+
+        // 2. Refrescar pendientes (BIN_PENDING)
         try {
           const data = await fetchBin(BIN_PENDING);
           const nuevos = Array.isArray(data.record?.pending) ? data.record.pending : [];
-
           if (nuevos.length !== pendingLinks.length) {
-            const eliminados = pendingLinks.length - nuevos.length;
             pendingLinks = nuevos;
             renderPendientes();
-            if (eliminados > 0) { await refrescarVideosDisponibles(); }
           }
-        } catch (e) { console.warn('[polling]', e.message); }
-      }, 20000);
+        } catch (e) { console.warn('[polling pending]', e.message); }
+      }, 30000); // cada 30 segundos
     }
 
     async function refrescarVideosDisponibles() {
@@ -482,10 +483,14 @@
         const nuevosVideos = todos.filter(v =>
           v && v.filename && !v.isFolder && /\.(mp4|mkv|avi|webm|mov)$/i.test(v.filename)
         );
-        if (nuevosVideos.length !== videosIglesia.length) {
+        // Comparar por cantidad Y por nombres para detectar renombrados/reemplazos
+        const nombresNuevos = nuevosVideos.map(v => v.filename).join('|');
+        const nombresActuales = videosIglesia.map(v => v.filename).join('|');
+        if (nombresNuevos !== nombresActuales) {
           videosIglesia = nuevosVideos;
           setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length} videos`, 'ok');
           renderDisponibles();
+          console.log('[polling] Lista de videos actualizada:', videosIglesia.length);
         }
       } catch (e) { console.warn('[polling videos]', e.message); }
     }
