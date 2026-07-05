@@ -248,6 +248,8 @@
         }
 
         setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length}`, 'ok');
+        _lastVideoCount = videosIglesia.length;
+        _lastPendingCount = pendingLinks.length;
         renderizarListas();
         iniciarPolling();
 
@@ -456,23 +458,45 @@
 
     /* ── Polling automático ── */
     let pollingInterval = null;
+    // Guardamos un hash liviano del último estado conocido para detectar cambios
+    let _lastVideoCount = -1;
+    let _lastPendingCount = -1;
 
     function iniciarPolling() {
       if (pollingInterval) return;
       pollingInterval = setInterval(async () => {
-        // 1. Refrescar lista de videos disponibles (BIN_VIDEOS)
-        await refrescarVideosDisponibles();
-
-        // 2. Refrescar pendientes (BIN_PENDING)
         try {
-          const data = await fetchBin(BIN_PENDING);
-          const nuevos = Array.isArray(data.record?.pending) ? data.record.pending : [];
-          if (nuevos.length !== pendingLinks.length) {
-            pendingLinks = nuevos;
+          // ── 1. Vigilar BIN_PENDING (descargas pendientes) ──
+          const dataPend = await fetchBin(BIN_PENDING);
+          const nuevosPend = Array.isArray(dataPend.record?.pending) ? dataPend.record.pending : [];
+
+          if (nuevosPend.length !== _lastPendingCount) {
+            const eliminados = _lastPendingCount >= 0 && nuevosPend.length < _lastPendingCount;
+            _lastPendingCount = nuevosPend.length;
+            pendingLinks = nuevosPend;
             renderPendientes();
+            // Si se eliminaron pendientes es porque el escritorio terminó una descarga
+            // → refrescar la lista de videos disponibles
+            if (eliminados) { await refrescarVideosDisponibles(); }
           }
-        } catch (e) { console.warn('[polling pending]', e.message); }
-      }, 30000); // cada 30 segundos
+
+          // ── 2. Vigilar BIN_VIDEOS (inventario de videos en la PC) ──
+          const dataVid = await fetchBin(BIN_VIDEOS);
+          const todos = extraerVideos(dataVid.record);
+          if (todos) {
+            const nuevosVideos = todos.filter(v =>
+              v && v.filename && !v.isFolder && /\.(mp4|mkv|avi|webm|mov)$/i.test(v.filename)
+            );
+            if (nuevosVideos.length !== _lastVideoCount) {
+              _lastVideoCount = nuevosVideos.length;
+              videosIglesia = nuevosVideos;
+              setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length}`, 'ok');
+              renderDisponibles();
+              console.log('[polling] Videos actualizados:', nuevosVideos.length);
+            }
+          }
+        } catch (e) { console.warn('[polling]', e.message); }
+      }, 20000);
     }
 
     async function refrescarVideosDisponibles() {
@@ -483,14 +507,10 @@
         const nuevosVideos = todos.filter(v =>
           v && v.filename && !v.isFolder && /\.(mp4|mkv|avi|webm|mov)$/i.test(v.filename)
         );
-        // Comparar por cantidad Y por nombres para detectar renombrados/reemplazos
-        const nombresNuevos = nuevosVideos.map(v => v.filename).join('|');
-        const nombresActuales = videosIglesia.map(v => v.filename).join('|');
-        if (nombresNuevos !== nombresActuales) {
+        if (nuevosVideos.length !== videosIglesia.length) {
           videosIglesia = nuevosVideos;
           setEstado(`<i class="bi bi-check-circle-fill"></i> ${videosIglesia.length} videos`, 'ok');
           renderDisponibles();
-          console.log('[polling] Lista de videos actualizada:', videosIglesia.length);
         }
       } catch (e) { console.warn('[polling videos]', e.message); }
     }
